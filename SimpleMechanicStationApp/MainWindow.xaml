@@ -31,7 +31,7 @@
         <SolidColorBrush x:Key="TextBox.MouseOver.Border" Color="#FF7EB4EA" Opacity="0.5"/>
         <SolidColorBrush x:Key="TextBox.Focus.Border" Color="#FF569DE5" Opacity="0.5"/>
 
-        <SolidColorBrush x:Key="EButtonExit.Static.Background" Color="#FFBAEDBB" Opacity="0.8"/>
+        <SolidColorBrush x:Key="EButtonExit.Static.Background" Color="#FFE45252" Opacity="0.8"/>
         <SolidColorBrush x:Key="EButtonExit.Static.Stroke" Color="#FFE45252" Opacity="1"/>
         <SolidColorBrush x:Key="EButtonCollapse.Static.Background" Color="#FFBAEDBB" Opacity="0.8"/>
         <SolidColorBrush x:Key="EButtonCollapse.Static.Stroke" Color="#FFBAEDBB" Opacity="1"/>
