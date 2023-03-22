@@ -8,13 +8,43 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ApplicationDefinition Remove="App.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Remove="TemplatesXAML\Controls\ButtonDictionary.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="WpfLibrary1">
-      <HintPath>bin\Debug\net6.0-windows\WpfLibrary1.dll</HintPath>
+    <Reference Include="ClassFormConstructor">
+      <HintPath>..\..\..\..\..\..\Program Files\Mechanic station\DLL\ClassFormConstructor.dll</HintPath>
     </Reference>
+    <Reference Include="GeneralForm">
+      <HintPath>..\..\..\..\..\..\Program Files\Mechanic station\DLL\GeneralForm.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="GeneralMethods\CreateForm\" />
+    <Folder Include="MainWindow\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Include="App.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="TemplatesXAML\Controls\ButtonDictionary.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ApplicationDefinition Update="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </ApplicationDefinition>
   </ItemGroup>
 
 </Project>
