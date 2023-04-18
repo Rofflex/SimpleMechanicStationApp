@@ -13,21 +13,10 @@ namespace SimpleMechanicStationApp
         public LogInWindow()
         {
             InitializeComponent();
-        }
-
-        private void ButtonExit_Click(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Shutdown();
-        }
-
-        private void ButtonCollapsed_Click(object sender, RoutedEventArgs e)
-        {
-            this.WindowState = WindowState.Minimized;
-        }
-
-        private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            DragMove();
+            GeneralMethods.CreateForm.Buttons.ButtonActions buttonActions = new(this);
+            ButtonExit.Click += buttonActions.Exit_Click;
+            ButtonCollapse.Click += buttonActions.Collapse_Click;
+            MouseDown += buttonActions.Window_MouseDown;
         }
 
         private void ButtonLogin_Click(object sender, RoutedEventArgs e)
@@ -37,18 +26,16 @@ namespace SimpleMechanicStationApp
             string Login = TextBoxLogin.Text.ToString();
             string Pass = PasswordBoxForPassword.Password;
             Access = dbFunctions.CheckLogPass(Login, Pass);
-            this.Hide();
             switch (Access) {
                 case 1:
-                    Window generalForm = GeneralForm.MainFormClass.createForm();
-
-                    generalForm.ShowDialog();
+                    MainWindow.MainWindow mainWindow = new MainWindow.MainWindow();
+                    mainWindow.Show();
+                    this.Close();
                     break;
                 case 2:
                     MessageBox.Show("Check your login and password");
                     break;   
             }
-            this.Show();
         }
         
     }

@@ -1,0 +1,17 @@
+﻿<Window x:Class="SimpleMechanicStationApp.MainWindow.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SimpleMechanicStationApp.MainWindow"
+        mc:Ignorable="d"
+        Title="MainForm" Height="600" Width="800" ResizeMode="NoResize" WindowStyle="None" AllowsTransparency="True" Background="Transparent" WindowStartupLocation="CenterScreen">
+    <Border x:Name="MainFormBorder" Style="{DynamicResource BorderCustom}">
+        <Grid x:Name="MainFormGrid">
+            <Button x:Name="Exit" Style="{DynamicResource RoundButtonExitCollapse}" Content="X" />
+            <Button x:Name="Collapse" Style="{DynamicResource RoundButtonExitCollapse}" Content="—" Margin="0,3,23,0" Background="{DynamicResource EButtonCollapse.Static.Background}" BorderBrush="{DynamicResource EButtonCollapse.Static.Stroke}"/>
+            <ScrollViewer Width="350" Height="500" Margin="0,40,40,0" HorizontalAlignment="Right" VerticalAlignment="Top">
+            </ScrollViewer>
+        </Grid>
+    </Border>
+</Window>

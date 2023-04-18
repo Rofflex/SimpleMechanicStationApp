@@ -2,52 +2,39 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Windows.Media.Animation;
+using SimpleMechanicStationApp.GeneralMethods.DBMethods.Abstract;
 
-class DbWorking:AbstractDbWorking
+
+namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Release
+{
+    public class DbWorking : AbstractDbWorking, IDbCommands
     {
-        public string connectionString { get; set; }
-        public string SqlCommandText { get; set; }
-        public bool ExecutedSqlQuery;
-
-        public override SqlConnection GetConnection()
+        public bool AuthUser(string Login, string Password)
         {
-
-            SqlConnection con = new SqlConnection(connectionString);
-            con.Open();
-            return con;
-
-        }
-        public override SqlCommand GetCommand(SqlConnection con)
-        {
-            return new SqlCommand(SqlCommandText, con);
-        }
-        public override bool SqlQueryOutput(SqlCommand cmd)
-        {
-        //Checking Login and Password
-            using (SqlDataReader reader = cmd.ExecuteReader())
+            bool ValidConnection;
+            using (var con = GetConnection())
+            using (var cmd = new SqlCommand())
             {
-                bool ReaderHasRows = reader.HasRows;
-                return ReaderHasRows;
+                con.Open();
+                cmd.Connection = con;
+                cmd.CommandText = "select Log, Pass from LogPass where Log = @Login and Pass = @Password";
+                cmd.Parameters.Add("Login", System.Data.SqlDbType.NVarChar).Value = Login;
+                cmd.Parameters.Add("Password", System.Data.SqlDbType.NVarChar).Value = Password;
+                ValidConnection = cmd.ExecuteScalar() == null ? false : true;
             }
+            return ValidConnection;
         }
-        public override List<string> SqlQueryOutput(SqlCommand cmd, List<string> ValuesList) 
+        /*public override List<string> SqlQueryOutput(SqlCommand cmd, List<string> ValuesList)
         {
             using (SqlDataReader reader = cmd.ExecuteReader())
             {
-                while (reader.Read()) 
+                while (reader.Read())
                 {
                     ValuesList.Add("");
                 }
             }
             return ValuesList;
-        }
-        public override SqlCommand ExecuteSqlQuery()
-        {
-
-            SqlConnection con;
-            SqlCommand cmd;
-            con = GetConnection();
-            cmd = GetCommand(con);
-            return cmd;
-        }
+        }*/
     }
+
+}
