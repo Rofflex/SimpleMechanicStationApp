@@ -7,9 +7,9 @@ using System.Windows.Controls;
 using System.Windows;
 using System.Windows.Media;
 
-namespace SimpleMechanicStationApp.MainWindow.Methods
+namespace SimpleMechanicStationApp.MainWindow.ViewModel
 {
-    public class MainWindowClass
+    public class MainWindowViewModel
     {
         private static MainWindow createBaseForm()
         {

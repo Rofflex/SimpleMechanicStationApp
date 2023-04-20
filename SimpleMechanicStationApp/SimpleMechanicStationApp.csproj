@@ -8,10 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ApplicationDefinition Remove="App.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Page Remove="TemplatesXAML\Controls\ButtonDictionary.xaml" />
   </ItemGroup>
 
@@ -20,16 +16,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Page Include="App.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Resource Include="TemplatesXAML\Controls\ButtonDictionary.xaml" />
   </ItemGroup>
 
   <ItemGroup>
     <ApplicationDefinition Update="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </ApplicationDefinition>
   </ItemGroup>
 
