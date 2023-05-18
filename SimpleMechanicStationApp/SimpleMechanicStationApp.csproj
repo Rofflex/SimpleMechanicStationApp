@@ -26,4 +26,8 @@
     </ApplicationDefinition>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="GeneralMethods\DBMethods\ViewModels\" />
+  </ItemGroup>
+
 </Project>

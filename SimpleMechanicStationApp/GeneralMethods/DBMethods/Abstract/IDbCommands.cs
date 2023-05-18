@@ -1,5 +1,9 @@
-﻿using System;
+﻿using SimpleMechanicStationApp.GeneralMethods.DBMethods.Models;
+using SimpleMechanicStationApp.GeneralVMM.Model;
+using SimpleMechanicStationApp.GeneralVMM.ViewModel;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -17,8 +21,8 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Abstract
         /// <param name="Login"></param>
         /// <param name="Password"></param>
         /// <returns></returns>
-        int AuthUser(string UserName, string Password);
-        //SqlCommand ExecuteSqlQuery();
-        //List<string> SqlQueryOutput(SqlCommand cmd, List<string> ValuesList);
+        int AuthUser(DbCurrentUserModel currentUserModel);
+        DbCurrentUserModel DownloadUserAccount(string? name);
+        List<Order> DownloadOrders();
     }
 }

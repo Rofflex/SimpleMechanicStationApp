@@ -1,57 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows;
 using System.Windows.Media;
+using SimpleMechanicStationApp.GeneralMethods.ViewModelBase;
+using SimpleMechanicStationApp.GeneralMethods.DBMethods.Models;
+using System.Threading;
+using SimpleMechanicStationApp.GeneralMethods.DBMethods.Abstract;
+using SimpleMechanicStationApp.GeneralMethods.DBMethods.Release;
+using System.Collections.ObjectModel;
+using SimpleMechanicStationApp.GeneralVMM.ViewModel;
+using SimpleMechanicStationApp.GeneralVMM.Model;
+using System.Windows.Input;
+using SimpleMechanicStationApp.OrderWindow.View;
 
 namespace SimpleMechanicStationApp.MainWindow.ViewModel
 {
-    public class MainWindowViewModel
+    public class MainWindowViewModel : ViewModelBase
     {
-        private static MainWindow createBaseForm()
+        private DbCurrentUserModel _currentUser;//Current User Data
+        private IDbCommands _dbCommands;//Commands to work with database
+
+        public MainWindowViewModel() 
         {
-            MainWindow mainWindow = new MainWindow();
-            mainWindow.Background = new SolidColorBrush(Colors.Beige);
-            return mainWindow;
+            _dbCommands = new DbWorking();
+            _currentUser = new DbCurrentUserModel();
+            updateCurrentUser();
+
+            Orders = new ObservableCollection<OrderViewModel>();
+            var orders = _dbCommands.DownloadOrders();
+            foreach (var order in orders)
+            {
+                Orders.Add(new OrderViewModel(order));
+            }
+
+            OpenOrderCommand = new ViewModelCommand(ExecuteOpenOrderCommand);
         }
 
-        private static MainWindow addObjects(MainWindow mainWindow)
+        public ObservableCollection<OrderViewModel> Orders { get; set; }
+        public ICommand OpenOrderCommand { get; }
+
+        private void updateCurrentUser()
         {
-            var newScrollViewer = new ScrollViewer();
-            newScrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
-            newScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-            newScrollViewer.Margin = new Thickness(0, 40, 40, 40);
-            newScrollViewer.Width = 350;
-            newScrollViewer.Height = 500;
-
-            /*var myResourceDictionary = new ResourceDictionary();
-            myResourceDictionary.Source =
-                new Uri("/SimpleMechanicStationApp;component/app.xaml",
-                        UriKind.RelativeOrAbsolute);
-
-            TextBlock newTextBlock = new TextBlock();
-            newTextBlock.Style = (Style)myResourceDictionary["TextBoxDictionary"];*/
-
-             /*System.Uri resourceLocater = new System.Uri("/SimpleMechanicStationApp;component/app.xaml", System.UriKind.Relative);*/
-
-
-
-            /*TextBlock newTextBlock = new TextBlock();
-            newTextBlock.Style = (Style)Application.Current.Resources.MergedDictionaries[2];*/
-            //System.Windows.Application.LoadComponent(newTextBlock, resourceLocater);
-
-            mainWindow.Content = newScrollViewer;
-            return mainWindow;
+            _currentUser = _dbCommands.DownloadUserAccount(Thread.CurrentPrincipal.Identity.Name);
         }
-
-        public static MainWindow createForm()
+        private void ExecuteOpenOrderCommand(object obj)
         {
-            var mainWindow = createBaseForm();
-            mainWindow = addObjects(mainWindow);
-            return mainWindow;
+            var clickedOrderViewModel = (OrderViewModel)obj;
+            var orderWindowView = new OrderWindowView(_currentUser, clickedOrderViewModel.Order);
+            orderWindowView.DataContext = _currentUser;
+            orderWindowView.Show();
         }
     }
 }

@@ -5,13 +5,53 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimpleMechanicStationApp.MainWindow"
         mc:Ignorable="d"
-        Title="MainForm" Height="600" Width="800" ResizeMode="NoResize" WindowStyle="None" AllowsTransparency="True" Background="Transparent" WindowStartupLocation="CenterScreen">
-    <Border x:Name="MainFormBorder" Style="{DynamicResource BorderCustom}">
+        Title="MainForm" 
+        Height="600" 
+        Width="800" 
+        ResizeMode="NoResize" 
+        WindowStyle="None" 
+        AllowsTransparency="True" 
+        Background="Transparent" 
+        WindowStartupLocation="CenterScreen">
+
+    <Border x:Name="MainFormBorder" 
+            Style="{DynamicResource BorderCustom}">
         <Grid x:Name="MainFormGrid">
-            <Button x:Name="Exit" Style="{DynamicResource RoundButtonExitCollapse}" Content="X" />
-            <Button x:Name="Collapse" Style="{DynamicResource RoundButtonExitCollapse}" Content="—" Margin="0,3,23,0" Background="{DynamicResource EButtonCollapse.Static.Background}" BorderBrush="{DynamicResource EButtonCollapse.Static.Stroke}"/>
-            <ScrollViewer Width="350" Height="500" Margin="0,40,40,0" HorizontalAlignment="Right" VerticalAlignment="Top">
+            
+            <Button x:Name="Exit" 
+                    Style="{DynamicResource RoundButtonExitCollapse}" 
+                    Content="X" />
+            
+            <Button x:Name="Collapse" 
+                    Style="{DynamicResource RoundButtonExitCollapse}" 
+                    Content="—" Margin="0,3,23,0" 
+                    Background="{DynamicResource EButtonCollapse.Static.Background}" 
+                    BorderBrush="{DynamicResource EButtonCollapse.Static.Stroke}"/>
+
+            <ScrollViewer x:Name="ScrollViewerOrders"
+                          Width="350" 
+                          Height="500" 
+                          Margin="0,40,40,0" 
+                          HorizontalAlignment="Right" 
+                          VerticalAlignment="Top">
+                <ItemsControl ItemsSource="{Binding Orders}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Content="{Binding Summary}"
+                                    Style="{DynamicResource RoundButtonCorner}"
+                                    Command="{Binding DataContext.OpenOrderCommand, RelativeSource={RelativeSource AncestorType=Window}}" 
+                                    CommandParameter="{Binding}"  
+                                    Margin="5"
+                                    Width="300"
+                                    Height="Auto"
+                                    FontSize="16" 
+                                    FontFamily="Times New Roman"
+                                    FontWeight="Bold"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </ScrollViewer>
         </Grid>
     </Border>
+    
 </Window>

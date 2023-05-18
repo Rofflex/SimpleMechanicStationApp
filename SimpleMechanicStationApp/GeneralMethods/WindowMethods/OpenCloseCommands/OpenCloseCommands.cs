@@ -1,4 +1,5 @@
-﻿using SimpleMechanicStationApp.MainWindow;
+﻿using SimpleMechanicStationApp.GeneralMethods.DBMethods.Models;
+using SimpleMechanicStationApp.MainWindow;
 using System;
 using System.Collections.Generic;
 using System.Linq;

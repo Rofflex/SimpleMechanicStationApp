@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SimpleMechanicStationApp.GeneralMethods.DBMethods.Models;
+using SimpleMechanicStationApp.MainWindow.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +24,7 @@ namespace SimpleMechanicStationApp.MainWindow
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new MainWindowViewModel();
             GeneralMethods.CreateForm.Buttons.ButtonActions buttonActions = new(this);
             Exit.Click += buttonActions.Exit_Click;
             Collapse.Click += buttonActions.Collapse_Click;

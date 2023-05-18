@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimpleMechanicStationApp"
-        xmlns:viewModel="clr-namespace:SimpleMechanicStationApp.LogInWindow.ViewModel" 
         xmlns:controls="clr-namespace:SimpleMechanicStationApp.TemplatesXAML.Controls"
         mc:Ignorable="d"
         Title="LoginWindow" 
@@ -15,18 +14,6 @@
         AllowsTransparency="True" 
         Background="Transparent" 
         WindowStartupLocation="CenterScreen">
-
-    <Window.DataContext>
-        <viewModel:LogInWindowViewModel/>
-    </Window.DataContext>
-    <!--<Window.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
-    </Window.Resources>
-    <Window.Visibility>
-        <Binding Path="IsViewVisible" 
-                 Mode="TwoWay" 
-                 Converter="{StaticResource BooleanToVisibility}"/>
-    </Window.Visibility>-->
 
     <Border Style="{DynamicResource BorderCustom}">
         <Grid x:Name="LogInWindowGrid">

@@ -1,25 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows;
 
 namespace SimpleMechanicStationApp.TemplatesXAML.Controls
 {
     /// <summary>
-    /// Логика взаимодействия для BindingPasswordBox.xaml
+    /// Logic for BindingPasswordBox.xaml
+    /// It is necessary because of troubles with password box. It can't work without creating logic for dedicated passwordbox
     /// </summary>
-    public partial class BindingPasswordBox : UserControl
+    public partial class BindingPasswordBox //: UserControl
     {
             public static readonly DependencyProperty PasswordProperty =
                 DependencyProperty.Register("Password", typeof(string), typeof(BindingPasswordBox));

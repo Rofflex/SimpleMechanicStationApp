@@ -11,7 +11,7 @@ namespace SimpleMechanicStationApp.GeneralMethods.ViewModelBase
     {
         //Fields
         private readonly Action<object> _executeAction;
-        private readonly Predicate<object> _canExecuteAction;
+        private readonly Predicate<object>? _canExecuteAction;
 
         //Constructors
         public ViewModelCommand(Action<object> executeAction)
