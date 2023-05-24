@@ -1,16 +1,16 @@
-﻿using SimpleMechanicStationApp.GeneralMethods.ViewModelBase;
-using SimpleMechanicStationApp.GeneralVMM.Model;
+﻿using SimpleMechanicStationApp.GeneralMethods.ViewModelBaseCommand;
+using SimpleMechanicStationApp.GeneralVMM.OrderVMM.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SimpleMechanicStationApp.GeneralVMM.ViewModel
+namespace SimpleMechanicStationApp.GeneralVMM.OrderVMM.ViewModel
 {
-    public class OrderViewModel:ViewModelBase
+    public class OrderViewModel : ViewModelBase
     {
-        public OrderViewModel(Order order) 
+        public OrderViewModel(Order order)
         {
             Order = order;
             UpdateSummary();

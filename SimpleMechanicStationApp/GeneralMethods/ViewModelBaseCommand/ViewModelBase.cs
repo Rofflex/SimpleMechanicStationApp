@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace SimpleMechanicStationApp.GeneralMethods.ViewModelBase
+namespace SimpleMechanicStationApp.GeneralMethods.ViewModelBaseCommand
 {
     public abstract class ViewModelBase : INotifyPropertyChanged
     {

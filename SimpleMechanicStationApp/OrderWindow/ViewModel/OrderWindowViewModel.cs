@@ -1,4 +1,4 @@
-﻿using SimpleMechanicStationApp.GeneralMethods.ViewModelBase;
+﻿using SimpleMechanicStationApp.GeneralMethods.ViewModelBaseCommand;
 using System;
 using System.Collections.Generic;
 using System.Linq;

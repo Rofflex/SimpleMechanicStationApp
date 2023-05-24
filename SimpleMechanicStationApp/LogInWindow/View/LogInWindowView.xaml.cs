@@ -2,7 +2,7 @@
 using System.Windows.Input;
 using SimpleMechanicStationApp.LogInWindow.ViewModel;
 
-namespace SimpleMechanicStationApp
+namespace SimpleMechanicStationApp.LogInWindow.View
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

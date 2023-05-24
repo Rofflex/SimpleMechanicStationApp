@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SimpleMechanicStationApp.GeneralVMM.Model
+namespace SimpleMechanicStationApp.GeneralVMM.OrderVMM.Model
 {
     public class Order
     {

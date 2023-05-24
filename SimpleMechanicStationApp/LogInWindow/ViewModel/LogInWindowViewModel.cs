@@ -1,8 +1,6 @@
-﻿using SimpleMechanicStationApp.GeneralMethods.DBMethods.Abstract;
-using SimpleMechanicStationApp.GeneralMethods.DBMethods.Models;
-using SimpleMechanicStationApp.GeneralMethods.DBMethods.Release;
-using SimpleMechanicStationApp.GeneralMethods.ViewModelBase;
-using SimpleMechanicStationApp.GeneralMethods.WindowMethods.OpenCloseCommands;
+﻿using SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands;
+using SimpleMechanicStationApp.GeneralMethods.ViewModelBaseCommand;
+using SimpleMechanicStationApp.GeneralVMM.CurrentUserM.Model;
 using System;
 using System.Linq;
 using System.Security.Principal;
@@ -14,13 +12,8 @@ namespace SimpleMechanicStationApp.LogInWindow.ViewModel
 {
     public class LogInWindowViewModel : ViewModelBase
     {
-
-        /*private string _username;
-        private string _password;
-        */
-        private DbCurrentUserModel _currentUser;
-        private IDbCommands _dbCommands;
-        private IOpenCloseCommands _openCloseCommands;
+        private CurrentUser _currentUser;
+        private IDBCommands _dbCommands;
 
         public string Username
         {
@@ -54,9 +47,8 @@ namespace SimpleMechanicStationApp.LogInWindow.ViewModel
 
         public LogInWindowViewModel()
         {
-            _currentUser= new DbCurrentUserModel();
-            _dbCommands = new DbWorking();
-            _openCloseCommands = new OpenCloseCommands();
+            _currentUser= new CurrentUser();
+            _dbCommands = new DBCommands();
             LoginCommand = new ViewModelCommand(ExecuteLoginCommand);
             RecoverPasswordCommand = new ViewModelCommand(p => ExecuteRecoverPassCommand(""));
         }
@@ -79,14 +71,25 @@ namespace SimpleMechanicStationApp.LogInWindow.ViewModel
                     MessageBox.Show("Wrong Login or Password");
                     break;
                 case 2:
-                    Thread.CurrentPrincipal = new GenericPrincipal(
-                    new GenericIdentity(Username), null);
-                    var currentWindow = Application.Current.Windows.OfType<Window>().SingleOrDefault(x => x.IsActive);
-                    var newWindow = new MainWindow.MainWindow();
-                    _openCloseCommands.OpenWindow(newWindow);
-                    _openCloseCommands.CloseWindow(currentWindow);
+                    /*Thread.CurrentPrincipal = new GenericPrincipal(
+                    new GenericIdentity(Username), null);*/
+                    var newWindow = new MainWindow.View.MainWindow(_currentUser);
+                    newWindow.Show();
+                    CloseWindow();
                     break;
             }   
+        }
+
+        private void CloseWindow()
+        {
+            foreach (Window window in Application.Current.Windows)
+            {
+                if (window.DataContext == this)
+                {
+                    window.Close();
+                    break;
+                }
+            }
         }
     }
 }

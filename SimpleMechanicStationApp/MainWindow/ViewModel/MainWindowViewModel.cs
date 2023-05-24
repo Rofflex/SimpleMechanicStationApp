@@ -1,30 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows.Controls;
-using System.Windows;
-using System.Windows.Media;
-using SimpleMechanicStationApp.GeneralMethods.ViewModelBase;
-using SimpleMechanicStationApp.GeneralMethods.DBMethods.Models;
-using System.Threading;
-using SimpleMechanicStationApp.GeneralMethods.DBMethods.Abstract;
-using SimpleMechanicStationApp.GeneralMethods.DBMethods.Release;
+﻿using SimpleMechanicStationApp.GeneralMethods.ViewModelBaseCommand;
 using System.Collections.ObjectModel;
-using SimpleMechanicStationApp.GeneralVMM.ViewModel;
-using SimpleMechanicStationApp.GeneralVMM.Model;
 using System.Windows.Input;
 using SimpleMechanicStationApp.OrderWindow.View;
+using SimpleMechanicStationApp.GeneralVMM.OrderVMM.ViewModel;
+using SimpleMechanicStationApp.GeneralVMM.CurrentUserM.Model;
+using SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands;
 
 namespace SimpleMechanicStationApp.MainWindow.ViewModel
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        private DbCurrentUserModel _currentUser;//Current User Data
-        private IDbCommands _dbCommands;//Commands to work with database
+        private CurrentUser _currentUser;//Current User Data
+        private IDBCommands _dbCommands;//Commands to work with database
 
-        public MainWindowViewModel() 
+        public string CurrentUserName
         {
-            _dbCommands = new DbWorking();
-            _currentUser = new DbCurrentUserModel();
+            get 
+            {
+                return _currentUser.Name;
+            }
+            set 
+            {
+                _currentUser.Name = value;
+                OnPropertyChanged(nameof(CurrentUserName));
+            }
+        }
+
+        public MainWindowViewModel(CurrentUser currentUser) 
+        {
+            _dbCommands = new DBCommands();
+            _currentUser = currentUser;
             updateCurrentUser();
 
             Orders = new ObservableCollection<OrderViewModel>();
@@ -42,7 +47,7 @@ namespace SimpleMechanicStationApp.MainWindow.ViewModel
 
         private void updateCurrentUser()
         {
-            _currentUser = _dbCommands.DownloadUserAccount(Thread.CurrentPrincipal.Identity.Name);
+            _currentUser = _dbCommands.DownloadUserAccount(_currentUser.Username);
         }
         private void ExecuteOpenOrderCommand(object obj)
         {

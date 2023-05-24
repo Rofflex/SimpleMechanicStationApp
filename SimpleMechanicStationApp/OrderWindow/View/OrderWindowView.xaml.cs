@@ -1,5 +1,5 @@
-﻿using SimpleMechanicStationApp.GeneralMethods.DBMethods.Models;
-using SimpleMechanicStationApp.GeneralVMM.Model;
+﻿using SimpleMechanicStationApp.GeneralVMM.CurrentUserM.Model;
+using SimpleMechanicStationApp.GeneralVMM.OrderVMM.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +21,7 @@ namespace SimpleMechanicStationApp.OrderWindow.View
     /// </summary>
     public partial class OrderWindowView : Window
     {
-        public OrderWindowView(DbCurrentUserModel dbCurrentUser, Order order)
+        public OrderWindowView(CurrentUser dbCurrentUser, Order order)
         {
             InitializeComponent();
             TestTextBlock.Text = order?.Summary.ToString();

@@ -1,6 +1,6 @@
-﻿using SimpleMechanicStationApp.GeneralMethods.DBMethods.Models;
-using SimpleMechanicStationApp.GeneralVMM.Model;
-using SimpleMechanicStationApp.GeneralVMM.ViewModel;
+﻿using SimpleMechanicStationApp.GeneralVMM.CurrentUserM.Model;
+using SimpleMechanicStationApp.GeneralVMM.OrderVMM.Model;
+using SimpleMechanicStationApp.GeneralVMM.OrderVMM.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,9 +9,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Abstract
+namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands
 {
-    public interface IDbCommands
+    public interface IDBCommands
     {
         //SqlCommand GetCommand(SqlConnection con);
 
@@ -21,8 +21,8 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Abstract
         /// <param name="Login"></param>
         /// <param name="Password"></param>
         /// <returns></returns>
-        int AuthUser(DbCurrentUserModel currentUserModel);
-        DbCurrentUserModel DownloadUserAccount(string? name);
+        int AuthUser(CurrentUser currentUserModel);
+        CurrentUser DownloadUserAccount(string? name);
         List<Order> DownloadOrders();
     }
 }

@@ -1,19 +1,16 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data.SqlClient;
 using System.Windows;
-using System.Windows.Documents;
-using SimpleMechanicStationApp.GeneralMethods.DBMethods.Abstract;
-using SimpleMechanicStationApp.GeneralMethods.DBMethods.Models;
-using SimpleMechanicStationApp.GeneralVMM.Model;
-using SimpleMechanicStationApp.GeneralVMM.ViewModel;
+using SimpleMechanicStationApp.GeneralMethods.DBMethods.DBConnection;
+using SimpleMechanicStationApp.GeneralVMM.CurrentUserM.Model;
+using SimpleMechanicStationApp.GeneralVMM.OrderVMM.Model;
 
-namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Release
+namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands
 {
-    public class DbWorking : AbstractDbWorking, IDbCommands
+    public class DBCommands : Connection, IDBCommands
     {
 
-        public int AuthUser(DbCurrentUserModel currentUserModel) //return 0 - no connection db; 1 - wrong log pass; 2 - connection established
+        public int AuthUser(CurrentUser currentUserModel) //return 0 - no connection db; 1 - wrong log pass; 2 - connection established
         {
             int ValidConnection;
             using (var con = GetConnection())
@@ -30,17 +27,17 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Release
                         ValidConnection = cmd.ExecuteScalar() == null ? 1 : 2;
                     }
                 }
-                catch(SqlException ex) 
+                catch (SqlException ex)
                 {
                     ValidConnection = 0;
-                } 
+                }
             }
             return ValidConnection;
         }
 
         public List<Order> DownloadOrders()
         {
-           var orders = new List<Order>();
+            var orders = new List<Order>();
             using (var con = GetConnection())
             {
                 try
@@ -49,17 +46,24 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Release
                     {
                         con.Open();
                         cmd.Connection = con;
-                        cmd.CommandText = "select OrderId, CarVIN, dbo.[Order].CarId, CarMake, CarModel, CarPlate, " +
+                        cmd.CommandText = "select OrderId, VIN, dbo.[Order].CarId, CarMake, CarModel, CarPlate, " +
                             "OrderOpenDate from dbo.[Order] inner join dbo.[CarInfo] on dbo.[Order].CarId = dbo.[CarInfo].CarId";
                         using (var reader = cmd.ExecuteReader())
                         {
                             //If needed can be orginized as automated looker for index of column, Example: var IndexOrderId = reader.GetOrdinal("OrderId");
 
-                            while (reader.Read()) 
-                            { 
+                            while (reader.Read())
+                            {
                                 var _carName = $"{reader.GetString(3)} {reader.GetString(4)}";
-                                orders.Add(new Order { OrderId = reader.GetInt32(0), CarVIN = reader.GetString(1), CarId = reader.GetInt32(2), 
-                                    CarName = _carName, CarPlate = reader.GetString(5), CarYear = reader.GetDateTime(6)}); 
+                                orders.Add(new Order
+                                {
+                                    OrderId = reader.GetInt32(0),
+                                    CarVIN = reader.GetString(1),
+                                    CarId = reader.GetInt32(2),
+                                    CarName = _carName,
+                                    CarPlate = reader.GetString(5),
+                                    CarYear = reader.GetDateTime(6)
+                                });
                             }
                         }
                     }
@@ -72,9 +76,9 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Release
             return orders;
         }
 
-        public DbCurrentUserModel DownloadUserAccount(string UserName)
+        public CurrentUser DownloadUserAccount(string UserName)
         {
-            DbCurrentUserModel currentUserModel = new DbCurrentUserModel();
+            CurrentUser currentUserModel = new CurrentUser();
             using (var con = GetConnection())
             {
                 try
@@ -105,18 +109,6 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Release
             }
             return currentUserModel;
         }
-
-        /*public override List<string> SqlQueryOutput(SqlCommand cmd, List<string> ValuesList)
-{
-   using (SqlDataReader reader = cmd.ExecuteReader())
-   {
-       while (reader.Read())
-       {
-           ValuesList.Add("");
-       }
-   }
-   return ValuesList;
-}*/
     }
 
 }

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Models
+namespace SimpleMechanicStationApp.GeneralVMM.CurrentUserM.Model
 {
-    public class DbCurrentUserModel
+    public class CurrentUser
     {
         public string Username { get; set; }
         public string Password { get; set; }

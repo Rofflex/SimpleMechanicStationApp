@@ -3,13 +3,17 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Text.Json.Nodes;
 
-namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Abstract
+namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.DBConnection
 {
-    public abstract class AbstractDbWorking
+    /// <summary>
+    /// Returns established connection
+    /// Connection string assembled using credentials from ConFile which is located on Documents\\Mechanic Station\\Client
+    /// </summary>
+    public abstract class Connection
     {
         private readonly string connectionString;
 
-        public AbstractDbWorking() 
+        public Connection() 
         {
             connectionString = GetConnectionString();
         }

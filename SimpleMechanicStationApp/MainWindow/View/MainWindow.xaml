@@ -1,9 +1,9 @@
-﻿<Window x:Class="SimpleMechanicStationApp.MainWindow.MainWindow"
+﻿<Window x:Class="SimpleMechanicStationApp.MainWindow.View.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SimpleMechanicStationApp.MainWindow"
+        xmlns:local="clr-namespace:SimpleMechanicStationApp.MainWindow.View"
         mc:Ignorable="d"
         Title="MainForm" 
         Height="600" 
@@ -17,11 +17,11 @@
     <Border x:Name="MainFormBorder" 
             Style="{DynamicResource BorderCustom}">
         <Grid x:Name="MainFormGrid">
-            
+
             <Button x:Name="Exit" 
                     Style="{DynamicResource RoundButtonExitCollapse}" 
                     Content="X" />
-            
+
             <Button x:Name="Collapse" 
                     Style="{DynamicResource RoundButtonExitCollapse}" 
                     Content="—" Margin="0,3,23,0" 
@@ -37,8 +37,7 @@
                 <ItemsControl ItemsSource="{Binding Orders}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Button Content="{Binding Summary}"
-                                    Style="{DynamicResource RoundButtonCorner}"
+                            <Button Style="{DynamicResource RoundButtonCorner}"
                                     Command="{Binding DataContext.OpenOrderCommand, RelativeSource={RelativeSource AncestorType=Window}}" 
                                     CommandParameter="{Binding}"  
                                     Margin="5"
@@ -46,12 +45,29 @@
                                     Height="Auto"
                                     FontSize="16" 
                                     FontFamily="Times New Roman"
-                                    FontWeight="Bold"/>
+                                    FontWeight="Bold">
+
+                                <Grid>
+                                    <TextBlock Text="{Binding Summary}"
+                                               TextWrapping="Wrap"/>
+                                </Grid>
+                            </Button>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </ScrollViewer>
+
+            <TextBlock x:Name="User" 
+                       Margin="10,0,700,0"
+                       VerticalAlignment="Top"
+                       Width="Auto"
+                       Background="Transparent"
+                       Text="{Binding CurrentUserName}"
+                       FontSize="16" 
+                       FontFamily="Times New Roman" 
+                       FontWeight="Bold"
+                       TextAlignment="Center"/>
         </Grid>
     </Border>
-    
+
 </Window>
