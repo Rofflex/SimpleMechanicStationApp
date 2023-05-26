@@ -2,9 +2,6 @@
 using SimpleMechanicStationApp.GeneralMethods.ViewModelBaseCommand;
 using SimpleMechanicStationApp.GeneralVMM.CurrentUserM.Model;
 using System;
-using System.Linq;
-using System.Security.Principal;
-using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 
@@ -71,8 +68,6 @@ namespace SimpleMechanicStationApp.LogInWindow.ViewModel
                     MessageBox.Show("Wrong Login or Password");
                     break;
                 case 2:
-                    /*Thread.CurrentPrincipal = new GenericPrincipal(
-                    new GenericIdentity(Username), null);*/
                     var newWindow = new MainWindow.View.MainWindow(_currentUser);
                     newWindow.Show();
                     CloseWindow();

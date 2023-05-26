@@ -14,10 +14,6 @@ namespace SimpleMechanicStationApp.MainWindow.View
         {
             InitializeComponent();
             DataContext = new MainWindowViewModel(currentUser);
-            GeneralMethods.CreateForm.Buttons.ButtonActions buttonActions = new(this);
-            Exit.Click += buttonActions.Exit_Click;
-            Collapse.Click += buttonActions.Collapse_Click;
-            MouseDown += buttonActions.Window_MouseDown;
         }
     }
 }

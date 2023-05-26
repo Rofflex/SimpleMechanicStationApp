@@ -8,26 +8,15 @@
         Title="MainForm" 
         Height="600" 
         Width="800" 
+        Style="{DynamicResource RoundCornerView}"
         ResizeMode="NoResize" 
         WindowStyle="None" 
         AllowsTransparency="True" 
         Background="Transparent" 
         WindowStartupLocation="CenterScreen">
 
-    <Border x:Name="MainFormBorder" 
-            Style="{DynamicResource BorderCustom}">
+    <Border x:Name="MainFormBorder">
         <Grid x:Name="MainFormGrid">
-
-            <Button x:Name="Exit" 
-                    Style="{DynamicResource RoundButtonExitCollapse}" 
-                    Content="X" />
-
-            <Button x:Name="Collapse" 
-                    Style="{DynamicResource RoundButtonExitCollapse}" 
-                    Content="—" Margin="0,3,23,0" 
-                    Background="{DynamicResource EButtonCollapse.Static.Background}" 
-                    BorderBrush="{DynamicResource EButtonCollapse.Static.Stroke}"/>
-
             <ScrollViewer x:Name="ScrollViewerOrders"
                           Width="350" 
                           Height="500" 
@@ -43,8 +32,6 @@
                                     Margin="5"
                                     Width="300"
                                     Height="Auto"
-                                    FontSize="16" 
-                                    FontFamily="Times New Roman"
                                     FontWeight="Bold">
 
                                 <Grid>
@@ -63,8 +50,7 @@
                        Width="Auto"
                        Background="Transparent"
                        Text="{Binding CurrentUserName}"
-                       FontSize="16" 
-                       FontFamily="Times New Roman" 
+                       Style="{DynamicResource CustomTextBlockStyle}"
                        FontWeight="Bold"
                        TextAlignment="Center"/>
         </Grid>

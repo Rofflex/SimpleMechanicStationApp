@@ -13,10 +13,6 @@ namespace SimpleMechanicStationApp.LogInWindow.View
         {
             InitializeComponent();
             DataContext= new LogInWindowViewModel();
-            GeneralMethods.CreateForm.Buttons.ButtonActions buttonActions = new(this);
-            ButtonExit.Click += buttonActions.Exit_Click;
-            ButtonCollapse.Click += buttonActions.Collapse_Click;
-            MouseDown += buttonActions.Window_MouseDown;
         }       
     }
 }

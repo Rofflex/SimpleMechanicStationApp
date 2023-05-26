@@ -5,9 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimpleMechanicStationApp.OrderWindow.View"
         mc:Ignorable="d"
-        Title="OrderWindowView" Height="600" Width="800">
+        Title="OrderWindowView" 
+        Height="600" Width="1000" 
+        MaxHeight="1000" MinHeight="600" 
+        MaxWidth="1400" MinWidth="800"
+        Style="{DynamicResource RoundCornerView}"
+        WindowStyle="None" 
+        ResizeMode="CanResize"
+        AllowsTransparency="True" 
+        Background="Transparent" 
+        WindowStartupLocation="CenterScreen">
+    
     <Grid>
         <TextBlock x:Name="TestTextBlock" Text="{Binding TestTextBlockContent}" Height="100" Width="400" Background="Aqua"/>
 
     </Grid>
+    
 </Window>

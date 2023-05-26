@@ -3,29 +3,26 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SimpleMechanicStationApp.LogInWindow.View"
         xmlns:controls="clr-namespace:SimpleMechanicStationApp.TemplatesXAML.Controls"
         mc:Ignorable="d"
         Title="LoginWindow" 
-        Height="280" 
-        Width="450" 
+        Height="280" Width="450" 
+        Style="{StaticResource RoundCornerView}"
         ResizeMode="NoResize" 
         WindowStyle="None" 
         AllowsTransparency="True" 
-        Background="Transparent" 
+        Background="Transparent"
         WindowStartupLocation="CenterScreen">
 
-    <Border Style="{DynamicResource BorderCustom}">
+    <Border>
         <Grid x:Name="LogInWindowGrid">
-            
             <TextBox x:Name="TextBoxLogin" 
                      Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" 
                      Style="{DynamicResource RoundedTextBox}" 
-                     Margin="214,48,0,0" HorizontalContentAlignment="Center" 
+                     Margin="214,48,0,0" 
+                     HorizontalContentAlignment="Center" 
                      VerticalContentAlignment="Center" 
                      TextWrapping="NoWrap" 
-                     FontSize="16" 
-                     FontFamily="Times New Roman" 
                      Width="200" 
                      Height="50" 
                      HorizontalAlignment="Left" 
@@ -38,7 +35,7 @@
                     Width="200" 
                     Height="50" 
                     VerticalAlignment="Top"/>
-            
+
             <Button x:Name="ButtonLogin" 
                     Style="{DynamicResource RoundButtonCorner}" 
                     Command="{Binding LoginCommand}" 
@@ -46,11 +43,9 @@
                     Margin="161,193,0,0" 
                     VerticalAlignment="Top" 
                     Height="25" 
-                    FontSize="16" 
-                    FontFamily="Times New Roman" 
                     HorizontalAlignment="Left" 
                     Width="128"/>
-            
+
             <Button x:Name="ButtonForgotPassword" 
                     Style="{DynamicResource RoundButtonCorner}" 
                     Content="Forgot password" 
@@ -58,44 +53,27 @@
                     Margin="0,232,0,0" 
                     VerticalAlignment="Top" 
                     Height="25" 
-                    Width="128" 
-                    FontSize="16" 
-                    FontFamily="Times New Roman" />
+                    Width="128"/>
             
-            <Button x:Name="ButtonExit" 
-                    Style="{DynamicResource RoundButtonExitCollapse}" 
-                    Content="X" 
-                    HorizontalAlignment="Left" 
-                    Margin="431,3,0,0"/>
-            
-            <Button x:Name="ButtonCollapse" 
-                    Style="{DynamicResource RoundButtonExitCollapse}" 
-                    Content="—" 
-                    Margin="0,3,23,0" 
-                    Background="{DynamicResource EButtonCollapse.Static.Background}" 
-                    BorderBrush="{DynamicResource EButtonCollapse.Static.Stroke}"/>
-            
-            <TextBlock x:Name="TextBlockLogin"  
+            <TextBlock x:Name="TextBlockLogin" 
+                       Style="{DynamicResource CustomTextBlockStyle}"
                        Margin="36,64,0,0" 
-                       FontSize="16" 
-                       FontFamily="Times New Roman" 
                        Width="128" 
                        Height="20" 
                        VerticalAlignment="Top" 
                        HorizontalAlignment="Left" 
                        Text="Login" 
                        TextAlignment="Center" />
-            
-            <TextBlock x:Name="TextBlockPassword"  
+
+            <TextBlock x:Name="TextBlockPassword"
+                       Style="{DynamicResource CustomTextBlockStyle}"   
                        Margin="36,125,0,0" 
-                       FontSize="16" 
-                       FontFamily="Times New Roman" 
                        Width="128" 
                        Height="20" 
                        HorizontalAlignment="Left" 
                        VerticalAlignment="Top" 
                        Text="Password" 
-                       TextAlignment="Center" />
+                       TextAlignment="Center"/>
         </Grid>
     </Border>
 </Window>

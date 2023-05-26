@@ -1,16 +1,17 @@
 ﻿<Application x:Class="SimpleMechanicStationApp.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:SimpleMechanicStationApp"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+             xmlns:local = "clr-namespace:SimpleMechanicStationApp.TemplatesXAML.WindowTemplate"
              StartupUri="LogInWindow/View/LogInWindowView.xaml">
 
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="TemplatesXAML/Window/WindowDictionary.xaml"/>
                 <ResourceDictionary Source="TemplatesXAML/Controls/ButtonDictionary.xaml"/>
                 <ResourceDictionary Source="TemplatesXAML/Controls/TextBoxDictionary.xaml"/>
+                <local:WindowStyles/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
+
