@@ -6,7 +6,8 @@
         xmlns:controls="clr-namespace:SimpleMechanicStationApp.TemplatesXAML.Controls"
         mc:Ignorable="d"
         Title="LoginWindow" 
-        Height="280" Width="450" 
+        Height="280" 
+        Width="450" 
         Style="{StaticResource RoundCornerView}"
         ResizeMode="NoResize" 
         WindowStyle="None" 
@@ -54,7 +55,7 @@
                     VerticalAlignment="Top" 
                     Height="25" 
                     Width="128"/>
-            
+
             <TextBlock x:Name="TextBlockLogin" 
                        Style="{DynamicResource CustomTextBlockStyle}"
                        Margin="36,64,0,0" 

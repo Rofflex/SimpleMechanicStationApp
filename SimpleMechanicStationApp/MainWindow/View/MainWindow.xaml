@@ -28,15 +28,14 @@
                         <DataTemplate>
                             <Button Style="{DynamicResource RoundButtonCorner}"
                                     Command="{Binding DataContext.OpenOrderCommand, RelativeSource={RelativeSource AncestorType=Window}}" 
-                                    CommandParameter="{Binding}"  
+                                    CommandParameter="{Binding}"
+                                    IsEnabled="{Binding IsEnabled}"
                                     Margin="5"
                                     Width="300"
                                     Height="Auto"
                                     FontWeight="Bold">
-
                                 <Grid>
-                                    <TextBlock Text="{Binding Summary}"
-                                               TextWrapping="Wrap"/>
+                                    <TextBlock Text="{Binding Summary}" TextWrapping="Wrap"/>
                                 </Grid>
                             </Button>
                         </DataTemplate>
@@ -55,5 +54,4 @@
                        TextAlignment="Center"/>
         </Grid>
     </Border>
-
 </Window>

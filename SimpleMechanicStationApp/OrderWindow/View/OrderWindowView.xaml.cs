@@ -1,18 +1,8 @@
 ﻿using SimpleMechanicStationApp.GeneralVMM.CurrentUserM.Model;
 using SimpleMechanicStationApp.GeneralVMM.OrderVMM.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using SimpleMechanicStationApp.OrderWindow.ViewModel;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+
 
 namespace SimpleMechanicStationApp.OrderWindow.View
 {
@@ -24,6 +14,7 @@ namespace SimpleMechanicStationApp.OrderWindow.View
         public OrderWindowView(CurrentUser dbCurrentUser, Order order)
         {
             InitializeComponent();
+            DataContext = new OrderWindowViewModel(order);
             TestTextBlock.Text = order?.Summary.ToString();
         }
     }

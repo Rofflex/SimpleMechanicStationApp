@@ -14,7 +14,7 @@
         ResizeMode="CanResize"
         AllowsTransparency="True" 
         Background="Transparent" 
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="Manual">
     
     <Grid>
         <TextBlock x:Name="TestTextBlock" Text="{Binding TestTextBlockContent}" Height="100" Width="400" Background="Aqua"/>

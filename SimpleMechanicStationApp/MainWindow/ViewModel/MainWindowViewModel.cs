@@ -5,32 +5,33 @@ using SimpleMechanicStationApp.OrderWindow.View;
 using SimpleMechanicStationApp.GeneralVMM.OrderVMM.ViewModel;
 using SimpleMechanicStationApp.GeneralVMM.CurrentUserM.Model;
 using SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands;
+using System;
 
 namespace SimpleMechanicStationApp.MainWindow.ViewModel
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        private CurrentUser _currentUser;//Current User Data
-        private IDBCommands _dbCommands;//Commands to work with database
+        private CurrentUser _currentUser;
+        private IDBCommands _dbCommands;
 
         public string CurrentUserName
         {
-            get 
-            {
-                return _currentUser.Name;
-            }
-            set 
+            get => _currentUser.Name;
+            set
             {
                 _currentUser.Name = value;
                 OnPropertyChanged(nameof(CurrentUserName));
             }
         }
 
-        public MainWindowViewModel(CurrentUser currentUser) 
+        public ObservableCollection<OrderViewModel> Orders { get; }
+        public ICommand OpenOrderCommand { get; }
+
+        public MainWindowViewModel(CurrentUser currentUser)
         {
             _dbCommands = new DBCommands();
             _currentUser = currentUser;
-            updateCurrentUser();
+            UpdateCurrentUser();
 
             Orders = new ObservableCollection<OrderViewModel>();
             var orders = _dbCommands.DownloadOrders();
@@ -39,22 +40,29 @@ namespace SimpleMechanicStationApp.MainWindow.ViewModel
                 Orders.Add(new OrderViewModel(order));
             }
 
-            OpenOrderCommand = new ViewModelCommand(ExecuteOpenOrderCommand);
+            OpenOrderCommand = new ViewModelCommand<OrderViewModel>(ExecuteOpenOrderCommand);
         }
 
-        public ObservableCollection<OrderViewModel> Orders { get; set; }
-        public ICommand OpenOrderCommand { get; }
-
-        private void updateCurrentUser()
+        private void UpdateCurrentUser()
         {
             _currentUser = _dbCommands.DownloadUserAccount(_currentUser.Username);
         }
-        private void ExecuteOpenOrderCommand(object obj)
+
+        private void ExecuteOpenOrderCommand(OrderViewModel selectedOrder)
         {
-            var clickedOrderViewModel = (OrderViewModel)obj;
-            var orderWindowView = new OrderWindowView(_currentUser, clickedOrderViewModel.Order);
-            orderWindowView.DataContext = _currentUser;
+            var orderWindowView = new OrderWindowView(_currentUser, selectedOrder.Order);
+            orderWindowView.DataContext = selectedOrder;
+            orderWindowView.Closed += OrderWindowViewClosed;
             orderWindowView.Show();
+            selectedOrder.IsEnabled = false;
+        }
+
+        private void OrderWindowViewClosed(object? sender, EventArgs e)
+        {
+            if (sender is OrderWindowView orderWindowView && orderWindowView.DataContext is OrderViewModel orderViewModel)
+            {
+                orderViewModel.IsEnabled = true;
+            }
         }
     }
 }

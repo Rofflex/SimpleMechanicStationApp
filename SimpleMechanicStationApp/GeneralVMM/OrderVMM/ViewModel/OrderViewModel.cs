@@ -10,6 +10,7 @@ namespace SimpleMechanicStationApp.GeneralVMM.OrderVMM.ViewModel
 {
     public class OrderViewModel : ViewModelBase
     {
+        private bool _isEnabled = true;
         public OrderViewModel(Order order)
         {
             Order = order;
@@ -25,5 +26,15 @@ namespace SimpleMechanicStationApp.GeneralVMM.OrderVMM.ViewModel
         public Order Order { get; set; }
 
         public string Summary => Order.Summary;
+
+        public bool IsEnabled 
+        {
+            get { return _isEnabled; }
+            set
+            {
+                _isEnabled = value;
+                OnPropertyChanged(nameof(IsEnabled));
+            }
+        }
     }
 }
