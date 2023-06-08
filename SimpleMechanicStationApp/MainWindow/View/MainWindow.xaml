@@ -22,12 +22,14 @@
                           Height="500" 
                           Margin="0,40,40,0" 
                           HorizontalAlignment="Right" 
-                          VerticalAlignment="Top">
-                <ItemsControl ItemsSource="{Binding Orders}">
+                          VerticalAlignment="Top"
+                          IsTabStop="False">
+                <ItemsControl ItemsSource="{Binding Orders}"
+                              IsTabStop="False">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Button Style="{DynamicResource RoundButtonCorner}"
-                                    Command="{Binding DataContext.OpenOrderCommand, RelativeSource={RelativeSource AncestorType=Window}}" 
+                                    Command="{Binding DataContext.OpenOrderButton, RelativeSource={RelativeSource AncestorType=Window}}" 
                                     CommandParameter="{Binding}"
                                     IsEnabled="{Binding IsEnabled}"
                                     Margin="5"
@@ -35,7 +37,10 @@
                                     Height="Auto"
                                     FontWeight="Bold">
                                 <Grid>
-                                    <TextBlock Text="{Binding Summary}" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{Binding Summary}" 
+                                               TextWrapping="Wrap"
+                                               TextAlignment="Center"
+                                               Margin="2,0,2,0"/>
                                 </Grid>
                             </Button>
                         </DataTemplate>

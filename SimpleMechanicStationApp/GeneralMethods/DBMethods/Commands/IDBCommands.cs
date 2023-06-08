@@ -1,13 +1,7 @@
 ﻿using SimpleMechanicStationApp.GeneralVMM.CurrentUserM.Model;
-using SimpleMechanicStationApp.GeneralVMM.OrderVMM.Model;
-using SimpleMechanicStationApp.GeneralVMM.OrderVMM.ViewModel;
-using System;
+using SimpleMechanicStationApp.GeneralVMM.OrderButtonVMM.ViewModel;
+using SimpleMechanicStationApp.GeneralVMM.OrderM.Model;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands
 {
@@ -18,11 +12,13 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands
         /// <summary>
         /// returns int: 0 - no connection db; 1 - connection established but wrong log pass; 2 - connection established and Login Password are correct
         /// </summary>
-        /// <param name="Login"></param>
+        /// <param name="UserName"></param>
         /// <param name="Password"></param>
         /// <returns></returns>
-        int AuthUser(CurrentUser currentUserModel);
-        CurrentUser DownloadUserAccount(string? name);
-        List<Order> DownloadOrders();
+        int AuthUser(string UserName, string Password);
+        void DownloadUserAccount(CurrentUser currentUserModel);
+        List<OrderButtonViewModel> DownloadOrders();
+        Order UpdateOrder(int orderId);
+        List<T> GetItemsForOrder<T>(int orderId, string commandText);
     }
 }

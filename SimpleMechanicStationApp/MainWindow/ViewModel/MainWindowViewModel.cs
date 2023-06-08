@@ -1,18 +1,20 @@
-﻿using SimpleMechanicStationApp.GeneralMethods.ViewModelBaseCommand;
+﻿using SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands;
+using SimpleMechanicStationApp.GeneralMethods.ViewModelBaseCommand;
+using SimpleMechanicStationApp.GeneralVMM.CurrentUserM.Model;
+using SimpleMechanicStationApp.GeneralVMM.OrderButtonVMM.Model;
+using SimpleMechanicStationApp.GeneralVMM.OrderButtonVMM.ViewModel;
+using SimpleMechanicStationApp.OrderWindow.View;
+using SimpleMechanicStationApp.OrderWindow.ViewModel;
+using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using SimpleMechanicStationApp.OrderWindow.View;
-using SimpleMechanicStationApp.GeneralVMM.OrderVMM.ViewModel;
-using SimpleMechanicStationApp.GeneralVMM.CurrentUserM.Model;
-using SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands;
-using System;
 
 namespace SimpleMechanicStationApp.MainWindow.ViewModel
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        private CurrentUser _currentUser;
-        private IDBCommands _dbCommands;
+        private readonly IDBCommands _dbCommands = DBCommands.Instance;
+        private readonly CurrentUser _currentUser = CurrentUser.Instance;
 
         public string CurrentUserName
         {
@@ -24,44 +26,59 @@ namespace SimpleMechanicStationApp.MainWindow.ViewModel
             }
         }
 
-        public ObservableCollection<OrderViewModel> Orders { get; }
-        public ICommand OpenOrderCommand { get; }
+        public ObservableCollection<OrderButtonViewModel> Orders { get; }
+        public ICommand OpenOrderButton { get; }
 
-        public MainWindowViewModel(CurrentUser currentUser)
+        public MainWindowViewModel()
         {
-            _dbCommands = new DBCommands();
-            _currentUser = currentUser;
-            UpdateCurrentUser();
+            _dbCommands.DownloadUserAccount(_currentUser);
+            Orders = new ObservableCollection<OrderButtonViewModel>();
+            LoadOrders();
 
-            Orders = new ObservableCollection<OrderViewModel>();
+            OpenOrderButton = new ViewModelCommand<OrderButtonViewModel>(ExecuteOpenOrderButtonCommand);
+        }
+
+
+        private void LoadOrders()
+        {
             var orders = _dbCommands.DownloadOrders();
             foreach (var order in orders)
             {
-                Orders.Add(new OrderViewModel(order));
+                var orderButtonViewModel = new OrderButtonViewModel()
+                {
+                    OrderId = order.OrderId,
+                    Summary = order.Summary,
+                    IsEnabled = true
+                };
+                Orders.Add(orderButtonViewModel);
             }
-
-            OpenOrderCommand = new ViewModelCommand<OrderViewModel>(ExecuteOpenOrderCommand);
         }
 
-        private void UpdateCurrentUser()
+        private void ExecuteOpenOrderButtonCommand(OrderButtonViewModel selectedOrder)
         {
-            _currentUser = _dbCommands.DownloadUserAccount(_currentUser.Username);
-        }
-
-        private void ExecuteOpenOrderCommand(OrderViewModel selectedOrder)
-        {
-            var orderWindowView = new OrderWindowView(_currentUser, selectedOrder.Order);
-            orderWindowView.DataContext = selectedOrder;
+            var orderWindowViewModel = new OrderWindowViewModel(selectedOrder.OrderId);
+            var orderWindowView = new OrderWindowView()
+            {
+                DataContext = orderWindowViewModel
+            };
             orderWindowView.Closed += OrderWindowViewClosed;
             orderWindowView.Show();
+
             selectedOrder.IsEnabled = false;
         }
 
         private void OrderWindowViewClosed(object? sender, EventArgs e)
         {
-            if (sender is OrderWindowView orderWindowView && orderWindowView.DataContext is OrderViewModel orderViewModel)
+            if (sender is OrderWindowView orderWindowView && orderWindowView.DataContext is OrderWindowViewModel orderWindowViewModel)
             {
-                orderViewModel.IsEnabled = true;
+                foreach (var order in Orders)
+                {
+                    if (orderWindowViewModel.OrderId == order.OrderId)
+                    {
+                        order.IsEnabled = true;
+                        break;
+                    }
+                }
             }
         }
     }

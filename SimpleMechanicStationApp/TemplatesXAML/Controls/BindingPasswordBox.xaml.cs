@@ -8,25 +8,25 @@ namespace SimpleMechanicStationApp.TemplatesXAML.Controls
     /// </summary>
     public partial class BindingPasswordBox //: UserControl
     {
-            public static readonly DependencyProperty PasswordProperty =
-                DependencyProperty.Register("Password", typeof(string), typeof(BindingPasswordBox));
+        public static readonly DependencyProperty PasswordProperty =
+            DependencyProperty.Register("Password", typeof(string), typeof(BindingPasswordBox));
 
-            public string Password
-            {
-                get { return (string)GetValue(PasswordProperty); }
-                set { SetValue(PasswordProperty, value); }
-            }
+        public string Password
+        {
+            get { return (string)GetValue(PasswordProperty); }
+            set { SetValue(PasswordProperty, value); }
+        }
 
-            public BindingPasswordBox()
-            {
-                InitializeComponent();
-                PasswordBoxForPassword.PasswordChanged += OnPasswordChanged;
+        public BindingPasswordBox()
+        {
+            InitializeComponent();
+            PasswordBoxForPassword.PasswordChanged += OnPasswordChanged;
 
-            }
+        }
 
-            private void OnPasswordChanged(object sender, RoutedEventArgs e)
-            {
-                Password = (string)PasswordBoxForPassword.Password;
-            }
+        private void OnPasswordChanged(object sender, RoutedEventArgs e)
+        {
+            Password = (string)PasswordBoxForPassword.Password;
+        }
     }
 }

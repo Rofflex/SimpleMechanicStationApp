@@ -3,11 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SimpleMechanicStationApp.OrderWindow.View"
         mc:Ignorable="d"
         Title="OrderWindowView" 
-        Height="600" Width="1000" 
-        MaxHeight="1000" MinHeight="600" 
+        Height="800" Width="1000" 
+        MaxHeight="1080" MinHeight="800" 
         MaxWidth="1400" MinWidth="800"
         Style="{DynamicResource RoundCornerView}"
         WindowStyle="None" 
@@ -15,10 +14,316 @@
         AllowsTransparency="True" 
         Background="Transparent" 
         WindowStartupLocation="Manual">
-    
-    <Grid>
-        <TextBlock x:Name="TestTextBlock" Text="{Binding TestTextBlockContent}" Height="100" Width="400" Background="Aqua"/>
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <Style TargetType="TextBlock" >
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Foreground" Value="Black"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="TextAlignment" Value="Center"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
+            <Style TargetType="DataGridColumnHeader">
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid Background="Transparent" Margin="10,20,10,20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.35*"/>
+            <!--<RowDefinition Height="0.05*"/>-->
+            <RowDefinition Height="1*"/>
+            <!--- 0.95-->
+            <RowDefinition Height="0.35*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.5*">
+                </ColumnDefinition>
+                <ColumnDefinition Width="3*">
+                </ColumnDefinition>
+                <ColumnDefinition Width="1*">
+                </ColumnDefinition>
+                <ColumnDefinition Width="1*">
+                </ColumnDefinition>
+                <ColumnDefinition Width="1*">
+                </ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition>
+                </RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Grid.Column="0">
+                <StackPanel VerticalAlignment="Center" Margin="10,0,10,0">
+                    <TextBlock DockPanel.Dock="Top" Text="Order"/>
+                    <TextBox Style="{DynamicResource RoundedTextBox_Style1}"
+                         Grid.Row="1" 
+                         Margin="0,0,0,0"
+                         Text="{Binding OrderId}"
+                         IsReadOnly="True"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Row="0" Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                    <ColumnDefinition Width="2*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <StackPanel VerticalAlignment="Top" Margin="10,0,10,0">
+                    <TextBlock DockPanel.Dock="Top" Text="Make"/>
+                    <TextBox Style="{DynamicResource RoundedTextBox_Style1}"
+                         Grid.Row="1" 
+                         Margin="0,0,0,0"
+                         Text="{Binding CarMake}"
+                         IsReadOnly="True"/>
+                </StackPanel>
+
+                <StackPanel VerticalAlignment="Bottom" Margin="10,0,10,0" Grid.Column="0">
+                    <TextBlock DockPanel.Dock="Top" Text="Model"/>
+                    <TextBox Style="{DynamicResource RoundedTextBox_Style1}"
+                         Grid.Row="1" 
+                         Margin="0,0,0,0"
+                         Text="{Binding CarModel}"
+                         IsReadOnly="True"/>
+                </StackPanel>
+                <StackPanel VerticalAlignment="Center" Margin="10,0,10,0" Grid.Column="2">
+                    <TextBlock DockPanel.Dock="Top" Text="VIN"/>
+                    <TextBox Style="{DynamicResource RoundedTextBox_Style1}"
+                             Grid.Row="1" 
+                             Margin="0,0,0,0"
+                             Text="{Binding VIN}"
+                             IsReadOnly="True"
+                             FontSize="16"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Row="0" Grid.Column="2">
+                <StackPanel VerticalAlignment="Center" Margin="10,0,10,0">
+                    <TextBlock DockPanel.Dock="Top" Text="Year"/>
+                    <TextBox Style="{DynamicResource RoundedTextBox_Style1}"
+                         Grid.Row="1" 
+                         Margin="0,0,0,0"
+                         Text="{Binding CarYear}"
+                         IsReadOnly="True"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Row="0" Grid.Column="3">
+                <StackPanel VerticalAlignment="Center" Margin="10,0,10,0">
+                    <TextBlock DockPanel.Dock="Top" Text="Plate"/>
+                    <TextBox Style="{DynamicResource RoundedTextBox_Style1}"
+                         Grid.Row="1" 
+                         Margin="0,0,0,0"
+                         Text="{Binding CarPlate}"
+                         IsReadOnly="True"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Row="0" Grid.Column="4">
+                <StackPanel VerticalAlignment="Top" Grid.Column="3" Margin="0,0,0,0">
+                    <TextBlock DockPanel.Dock="Top" Text="Odometer before"/>
+                    <TextBox Style="{DynamicResource RoundedTextBox_Style1}"
+                         Grid.Row="1" 
+                         Margin="5,0,5,0"
+                         Text="{Binding CarOdometerStart}"
+                         IsReadOnly="True"/>
+                </StackPanel>
+                <StackPanel VerticalAlignment="Bottom" Grid.Column="3" Margin="0,0,0,0">
+                    <TextBlock DockPanel.Dock="Top" Text="Odometer after"/>
+                    <TextBox Style="{DynamicResource RoundedTextBox_Style1}"
+                         Grid.Row="1" 
+                         Margin="5,0,5,0"
+                         Text="{Binding CarOdometerFinish}"
+                         IsReadOnly="True"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Row="1" Grid.Column="0">
+                <StackPanel VerticalAlignment="Center" Margin="10,0,10,0">
+                    <TextBlock DockPanel.Dock="Top" Text="Car"/>
+                    <TextBox Style="{DynamicResource RoundedTextBox_Style1}"
+                         Grid.Row="1" 
+                         Margin="0,0,0,0"
+                         Text="{Binding CarName}"
+                         IsReadOnly="True"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Row="1" Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <StackPanel VerticalAlignment="Center" Margin="10,0,10,0">
+                    <TextBlock DockPanel.Dock="Top" Text="Name"/>
+                    <TextBox Style="{DynamicResource RoundedTextBox_Style1}"
+                         Grid.Row="1" 
+                         Margin="0,0,0,0"
+                         Text="{Binding CustomerName}"
+                         IsReadOnly="True"/>
+                </StackPanel>
+                <StackPanel VerticalAlignment="Center" Margin="10,0,10,0" Grid.Column="1">
+                    <TextBlock DockPanel.Dock="Top" Text="Address"/>
+                    <TextBox Style="{DynamicResource RoundedTextBox_Style1}"
+                         Grid.Row="1" 
+                         Margin="0,0,0,0"
+                         Text="{Binding CustomerAddress}"
+                         IsReadOnly="True"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Row="1" Grid.Column="2">
+                <StackPanel VerticalAlignment="Center" Margin="10,0,10,0">
+                    <TextBlock DockPanel.Dock="Top" Text="Phone"/>
+                    <TextBox Style="{DynamicResource RoundedTextBox_Style1}"
+                         Grid.Row="1" 
+                         Margin="0,0,0,0"
+                         Text="{Binding CustomerPhone}"
+                         IsReadOnly="True"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Row="1" Grid.Column="3">
+                <StackPanel VerticalAlignment="Center" Margin="10,0,10,0">
+                    <TextBlock DockPanel.Dock="Top" Text="Open date"/>
+                    <TextBox Style="{DynamicResource RoundedTextBox_Style1}"
+                         Grid.Row="1" 
+                         Margin="0,0,0,0"
+                         Text="{Binding OrderOpenDate}"
+                         IsReadOnly="True"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Row="1" Grid.Column="4">
+                <StackPanel VerticalAlignment="Center" Margin="10,0,10,0">
+                    <TextBlock DockPanel.Dock="Top" Text="Close date"/>
+                    <TextBox Style="{DynamicResource RoundedTextBox_Style1}"
+                         Grid.Row="1" 
+                         Margin="0,0,0,0"
+                         Text="{Binding OrderCloseDate}"
+                         IsReadOnly="True"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+        <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="10"/>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.05*">
+                </ColumnDefinition>
+                <ColumnDefinition Width="*">
+                </ColumnDefinition>
+                <ColumnDefinition Width="0.05*">
+                </ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TabControl Grid.Column="1" 
+                        FontFamily="Times New Roman"
+                        FontSize="16" Opacity="0.8">
+                <TabItem Style="{DynamicResource TabItemCustomStyle}" 
+                         Header="Parts" 
+                         Margin="-2,-2,0,0">
+
+                    <DataGrid ItemsSource="{Binding Parts}" 
+                              AutoGenerateColumns="False" 
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              CanUserResizeRows="False"
+                              CanUserReorderColumns="False"
+                              CanUserResizeColumns="False"
+                              VerticalScrollBarVisibility="Hidden">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Part ID" Binding="{Binding PartId}" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextWrapping" Value="Wrap"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Description" Binding="{Binding PartDescription}" Width="1.95*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextWrapping" Value="Wrap" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Manufacture" Binding="{Binding ManufactureName}" Width="*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextWrapping" Value="Wrap" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Retail price" Binding="{Binding PartRetailPrice}" Width="*"/>
+                            <DataGridTextColumn Header="Sale price" Binding="{Binding PartSalePrice}" Width="*"/>
+                            <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="*"/>
+                            <DataGridTextColumn Header="Sold value" Binding="{Binding PartSoldPrice}" Width="*"/>
+                            <DataGridTextColumn Header="Summary" Binding="{Binding Summary}" Width="152"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                </TabItem>
+                <TabItem Style="{DynamicResource TabItemCustomStyle}" 
+                         Header="Labors" 
+                         Margin="0,-2,-2,0">
+
+                    <DataGrid ItemsSource="{Binding Labors}" 
+                              AutoGenerateColumns="False" 
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              CanUserResizeRows="False"
+                              CanUserReorderColumns="False"
+                              CanUserResizeColumns="False"
+                              VerticalScrollBarVisibility="Hidden">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Labor ID" Binding="{Binding LaborId}" Visibility="Hidden"/>
+                            <DataGridTextColumn Header="Labors performed" Binding="{Binding LaborName}" Width="2*">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="TextWrapping" Value="Wrap" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Hours" Binding="{Binding LaborHours}" Width="0.2*"/>
+                            <DataGridTextColumn Header="Mechanic" Binding="{Binding MechanicName}" Width="0.3*"/>
+                            <DataGridTextColumn Header="Price" Binding="{Binding LaborSoldPrice}" Width="152"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </TabItem>
+            </TabControl>
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.05*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="0.05*"/>
+            </Grid.ColumnDefinitions>
+
+
+        </Grid>
+
+        <Grid Grid.Row="3" ShowGridLines="True">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*">
+                </ColumnDefinition>
+                <ColumnDefinition Width="49*">
+                </ColumnDefinition>
+                <ColumnDefinition Width="156">
+                </ColumnDefinition>
+                <ColumnDefinition Width="3*">
+                </ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+        </Grid>
 
     </Grid>
-    
 </Window>

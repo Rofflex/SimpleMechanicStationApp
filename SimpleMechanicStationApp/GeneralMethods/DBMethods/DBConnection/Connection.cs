@@ -13,7 +13,7 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.DBConnection
     {
         private readonly string connectionString;
 
-        public Connection() 
+        public Connection()
         {
             connectionString = GetConnectionString();
         }
@@ -36,12 +36,12 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.DBConnection
                 string Password = result["password"].ToString();
                 string Source = result["source"].ToString();
                 string InitialCatalog = result["initial catalog"].ToString();
-                ConString = $"Data Source={Source};Initial Catalog={InitialCatalog};User ID={Login};Password={Password}";
+                ConString = $"Data Source={Source};Initial Catalog={InitialCatalog};User ID={Login};Password={Password};Connection Timeout=5";
             }
             return ConString;
         }
 
-        private string getUserName() 
+        private string getUserName()
         {
             return Environment.UserName;
         }

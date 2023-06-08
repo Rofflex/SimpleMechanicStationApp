@@ -1,6 +1,5 @@
-﻿using System.Windows;
-using System.Windows.Input;
-using SimpleMechanicStationApp.LogInWindow.ViewModel;
+﻿using SimpleMechanicStationApp.LogInWindow.ViewModel;
+using System.Windows;
 
 namespace SimpleMechanicStationApp.LogInWindow.View
 {
@@ -12,7 +11,7 @@ namespace SimpleMechanicStationApp.LogInWindow.View
         public LogInWindowView()
         {
             InitializeComponent();
-            DataContext= new LogInWindowViewModel();
-        }       
+            DataContext = new LogInWindowViewModel();
+        }
     }
 }

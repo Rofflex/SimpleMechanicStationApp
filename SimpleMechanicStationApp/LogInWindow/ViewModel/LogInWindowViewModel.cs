@@ -38,8 +38,8 @@ namespace SimpleMechanicStationApp.LogInWindow.ViewModel
 
         public LogInWindowViewModel()
         {
-            _currentUser = new CurrentUser();
-            _dbCommands = new DBCommands();
+            _currentUser = CurrentUser.Instance;
+            _dbCommands = DBCommands.Instance;
             LoginCommand = new ViewModelCommand<object>(ExecuteLoginCommand);
             RecoverPasswordCommand = new ViewModelCommand<object>(ExecuteRecoverPassCommand);
         }
@@ -52,12 +52,12 @@ namespace SimpleMechanicStationApp.LogInWindow.ViewModel
 
         private void ExecuteLoginCommand(object obj)
         {
-            var isValidUser = _dbCommands.AuthUser(_currentUser);
+            var isValidUser = _dbCommands.AuthUser(Username, Password);
 
             switch (isValidUser)
             {
                 case 0:
-                    MessageBox.Show("Database connection not established");
+                    MessageBox.Show("Database connection is not established");
                     break;
 
                 case 1:
@@ -69,7 +69,7 @@ namespace SimpleMechanicStationApp.LogInWindow.ViewModel
                         .FirstOrDefault(window => window.DataContext == this);
                     if (currentWindow != null)
                     {
-                        var newWindow = new MainWindow.View.MainWindow(_currentUser);
+                        var newWindow = new MainWindow.View.MainWindow();
                         newWindow.Show();
                         currentWindow.Close();
                     }
