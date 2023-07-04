@@ -193,14 +193,12 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands
                                 var properties = typeof(T).GetProperties();
                                 foreach (var property in properties)
                                 {
-                                    if (reader[property.Name] != DBNull.Value)
+                                    bool hasReaderProperty = CheckReaderProperty(reader, property.Name);
+
+                                    if (hasReaderProperty)
                                     {
                                         var value = Convert.ChangeType(reader[property.Name], property.PropertyType);
                                         property.SetValue(item, value);
-                                    }
-                                    else
-                                    {
-
                                     }
                                 }
 
@@ -216,6 +214,20 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands
                 finally { con.Close(); }
             }
             return items;
+        }
+
+        private static bool CheckReaderProperty (SqlDataReader reader, string property) 
+        {
+            bool flag;
+            try 
+            {
+                flag = reader[property] != DBNull.Value ? true : false;
+            }
+            catch(Exception) 
+            {
+                flag = false;
+            }
+            return flag;
         }
     }
 }

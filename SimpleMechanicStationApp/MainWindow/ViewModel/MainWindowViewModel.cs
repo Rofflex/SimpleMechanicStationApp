@@ -13,9 +13,11 @@ namespace SimpleMechanicStationApp.MainWindow.ViewModel
 {
     public class MainWindowViewModel : ViewModelBase
     {
+        // Class fields
         private readonly IDBCommands _dbCommands = DBCommands.Instance;
         private readonly CurrentUser _currentUser = CurrentUser.Instance;
 
+        // Properties
         public string CurrentUserName
         {
             get => _currentUser.Name;
@@ -29,6 +31,7 @@ namespace SimpleMechanicStationApp.MainWindow.ViewModel
         public ObservableCollection<OrderButtonViewModel> Orders { get; }
         public ICommand OpenOrderButton { get; }
 
+        //Constructor
         public MainWindowViewModel()
         {
             _dbCommands.DownloadUserAccount(_currentUser);
@@ -38,7 +41,7 @@ namespace SimpleMechanicStationApp.MainWindow.ViewModel
             OpenOrderButton = new ViewModelCommand<OrderButtonViewModel>(ExecuteOpenOrderButtonCommand);
         }
 
-
+        // Methods
         private void LoadOrders()
         {
             var orders = _dbCommands.DownloadOrders();

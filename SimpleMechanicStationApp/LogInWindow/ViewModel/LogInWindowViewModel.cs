@@ -10,9 +10,11 @@ namespace SimpleMechanicStationApp.LogInWindow.ViewModel
 {
     public class LogInWindowViewModel : ViewModelBase
     {
-        private CurrentUser _currentUser;
-        private IDBCommands _dbCommands;
+        // Class fields
+        private readonly IDBCommands _dbCommands = DBCommands.Instance;
+        private readonly CurrentUser _currentUser = CurrentUser.Instance;
 
+        // Properties
         public string Username
         {
             get => _currentUser.Username;
@@ -36,15 +38,15 @@ namespace SimpleMechanicStationApp.LogInWindow.ViewModel
         public ICommand LoginCommand { get; }
         public ICommand RecoverPasswordCommand { get; }
 
+        // Constructor
         public LogInWindowViewModel()
         {
-            _currentUser = CurrentUser.Instance;
-            _dbCommands = DBCommands.Instance;
             LoginCommand = new ViewModelCommand<object>(ExecuteLoginCommand);
-            RecoverPasswordCommand = new ViewModelCommand<object>(ExecuteRecoverPassCommand);
+            RecoverPasswordCommand = new ViewModelCommand<object>(ExecuteRecoverPasswordCommand);
         }
 
-        private void ExecuteRecoverPassCommand(object obj)
+        // Methods
+        private void ExecuteRecoverPasswordCommand(object obj)
         {
             // TODO: Implement password recovery logic
             throw new NotImplementedException();
@@ -77,4 +79,5 @@ namespace SimpleMechanicStationApp.LogInWindow.ViewModel
             }
         }
     }
+
 }

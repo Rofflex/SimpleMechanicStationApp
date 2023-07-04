@@ -10,6 +10,7 @@
                 <ResourceDictionary Source="TemplatesXAML/Controls/ButtonDictionary.xaml"/>
                 <ResourceDictionary Source="TemplatesXAML/Controls/TextBoxDictionary.xaml"/>
                 <ResourceDictionary Source="TemplatesXAML/Controls/TabControlDictionary.xaml"/>
+                <ResourceDictionary Source="TemplatesXAML/Controls/TabItemDictionary.xaml"/>
                 <local:WindowStyles/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
