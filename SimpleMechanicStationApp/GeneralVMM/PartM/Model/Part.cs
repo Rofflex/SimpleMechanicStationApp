@@ -1,109 +1,112 @@
-﻿using SimpleMechanicStationApp.GeneralMethods.ViewModelBaseCommand;
-using System;
+﻿using System;
 
 namespace SimpleMechanicStationApp.GeneralVMM.PartM.Model
 {
-    public class Part : ViewModelBase
+    public class Part : BaseModel<string>
     {
-        private string _partId;
-        public string PartId
-        {
-            get { return _partId; }
-            set
-            {
-                if (_partId != value)
-                {
-                    _partId = value;
-                    OnPropertyChanged(nameof(PartId));
-                }
-            }
-        }
-
+        // Fields
         private string _partDescription;
-        public string PartDescription
-        {
-            get { return _partDescription; }
-            set
-            {
-                if (_partDescription != value)
-                {
-                    _partDescription = value;
-                    OnPropertyChanged(nameof(PartDescription));
-                }
-            }
-        }
-
+        private string _partLink;
+        private int _manufactureId;
         private string _manufactureName;
-        public string ManufactureName
-        {
-            get { return _manufactureName; }
-            set
-            {
-                if (_manufactureName != value)
-                {
-                    _manufactureName = value;
-                    OnPropertyChanged(nameof(ManufactureName));
-                }
-            }
-        }
-
         private decimal _partRetailPrice;
-        public decimal PartRetailPrice
-        {
-            get { return _partRetailPrice; }
-            set
-            {
-                if (_partRetailPrice != value)
-                {
-                    _partRetailPrice = value;
-                    OnPropertyChanged(nameof(PartRetailPrice));
-                }
-            }
-        }
-
         private decimal _partTradePrice;
-        public decimal PartTradePrice
-        {
-            get { return _partTradePrice; }
-            set
-            {
-                if (_partTradePrice != value)
-                {
-                    _partTradePrice = value;
-                    OnPropertyChanged(nameof(PartTradePrice));
-                }
-            }
-        }
-
         private decimal _quantity;
-        public decimal Quantity
+        private decimal _partSoldPrice;
+        
+        // Properties 
+        public string PartId 
         {
-            get { return _quantity; }
-            set
+            get => Id;
+            set 
             {
-                if (_quantity != value)
-                {
-                    _quantity = value;
-                    OnPropertyChanged(nameof(Quantity));
-                    OnPropertyChanged(nameof(Summary));
-                }
+                Id = value;
+                OnPropertyChanged(nameof(PartId));
             }
         }
-
-        private decimal _partSoldPrice;
+        public string PartName 
+        {
+            get => Name;
+            set
+            {
+                Name = value;
+                OnPropertyChanged(nameof(PartName));
+            }
+        }
+        public string PartDescription 
+        {
+            get => _partDescription;
+            set 
+            {
+                _partDescription = value;
+                OnPropertyChanged(nameof(PartDescription));
+            }
+        }
+        public string PartLink
+        {
+            get => _partLink;
+            set
+            {
+                _partLink = value;
+                OnPropertyChanged(nameof(PartLink));
+            }
+        }
+        public int ManufactureId
+        {
+            get => _manufactureId;
+            set
+            {
+                _manufactureId = value;
+                OnPropertyChanged(nameof(ManufactureId));
+            }
+        }
+        public string ManufactureName 
+        {
+            get => _manufactureName;
+            set 
+            {
+                _manufactureName= value;
+                OnPropertyChanged(nameof(ManufactureName));
+            }
+        }
+        public decimal PartRetailPrice 
+        {
+            get => _partRetailPrice;
+            set 
+            {
+                _partRetailPrice= value;
+                OnPropertyChanged(nameof(PartRetailPrice));
+            }
+        }
+        public decimal PartTradePrice 
+        {
+            get => _partTradePrice;
+            set 
+            {
+                _partTradePrice= value;
+                OnPropertyChanged(nameof(PartTradePrice));
+            }
+        }
+        public decimal Quantity 
+        {
+            get => _quantity;
+            set 
+            { 
+                _quantity = value; 
+                OnPropertyChanged(nameof(Quantity));
+                OnPropertyChanged(nameof(Summary));
+            }
+        }
         public decimal PartSoldPrice
         {
-            get { return _partSoldPrice; }
+            get => _partSoldPrice;
             set
             {
-                if (_partSoldPrice != value)
-                {
-                    _partSoldPrice = value;
-                    OnPropertyChanged(nameof(PartSoldPrice));
-                    OnPropertyChanged(nameof(Summary));
-                }
+                _partSoldPrice = value;
+                OnPropertyChanged(nameof(PartSoldPrice));
+                OnPropertyChanged(nameof(Summary));
             }
         }
-        public decimal Summary => Math.Round(PartSoldPrice * Quantity);
+        public decimal Summary => Math.Round(PartSoldPrice * Quantity, 2);
     }
 }

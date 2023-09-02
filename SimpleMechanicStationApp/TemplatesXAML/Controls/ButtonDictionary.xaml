@@ -75,6 +75,10 @@
                             <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Pressed.Background1}"/>
                             <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.MouseOver.Border1}"/>
                         </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Disabled.Background}"/>
+                            <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.MouseOver.Border1}"/>
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

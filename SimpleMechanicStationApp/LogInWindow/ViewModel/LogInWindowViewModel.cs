@@ -35,24 +35,24 @@ namespace SimpleMechanicStationApp.LogInWindow.ViewModel
             }
         }
 
-        public ICommand LoginCommand { get; }
-        public ICommand RecoverPasswordCommand { get; }
+        public ICommand Login { get; }
+        public ICommand RecoverPassword { get; }
 
         // Constructor
         public LogInWindowViewModel()
         {
-            LoginCommand = new ViewModelCommand<object>(ExecuteLoginCommand);
-            RecoverPasswordCommand = new ViewModelCommand<object>(ExecuteRecoverPasswordCommand);
+            Login = new ViewModelCommand<object>(ExecuteLogin);
+            RecoverPassword = new ViewModelCommand<object>(ExecuteRecoverPassword);
         }
 
         // Methods
-        private void ExecuteRecoverPasswordCommand(object obj)
+        private void ExecuteRecoverPassword(object obj)
         {
             // TODO: Implement password recovery logic
             throw new NotImplementedException();
         }
 
-        private void ExecuteLoginCommand(object obj)
+        private void ExecuteLogin(object obj)
         {
             var isValidUser = _dbCommands.AuthUser(Username, Password);
 

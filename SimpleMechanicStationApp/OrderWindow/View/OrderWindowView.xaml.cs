@@ -24,12 +24,9 @@ namespace SimpleMechanicStationApp.OrderWindow.View
 
             if (cellInfo != null && cellInfo.Value.Column != null)
             {
-                var column = cellInfo.Value.Column;
-                var changedColumn = column.Header;
-
                 if (viewModel.DefinateColumnsChanged.CanExecute(null))
                 {
-                    viewModel.DefinateColumnsChanged.Execute(changedColumn);
+                    viewModel.DefinateColumnsChanged.Execute(null);
                 }
             }
         }
@@ -43,6 +40,27 @@ namespace SimpleMechanicStationApp.OrderWindow.View
         private void DataGrid_CurrentCellChanged(object sender, EventArgs e)
         {
             UpdateAmount(sender, e);
+        }
+
+        private void TextBox_MouseDoubleClick_ChooseCar(object sender, MouseEventArgs e) 
+        {
+            if (DataContext is OrderWindowViewModel viewModel)
+            {
+                if (viewModel.ChooseCar.CanExecute(null))
+                {
+                    viewModel.ChooseCar.Execute(null);
+                }
+            }
+        }
+        private void TextBox_MouseDoubleClick_ChooseCustomer(object sender, MouseEventArgs e)
+        {
+            if (DataContext is OrderWindowViewModel viewModel)
+            {
+                if (viewModel.ChooseCustomer.CanExecute(null))
+                {
+                    viewModel.ChooseCustomer.Execute(null);
+                }
+            }
         }
     }
 }

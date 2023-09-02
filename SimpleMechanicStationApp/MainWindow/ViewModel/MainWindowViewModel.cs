@@ -1,12 +1,14 @@
 ﻿using SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands;
 using SimpleMechanicStationApp.GeneralMethods.ViewModelBaseCommand;
 using SimpleMechanicStationApp.GeneralVMM.CurrentUserM.Model;
+using SimpleMechanicStationApp.GeneralVMM.LaborM.Model;
 using SimpleMechanicStationApp.GeneralVMM.OrderButtonVMM.Model;
 using SimpleMechanicStationApp.GeneralVMM.OrderButtonVMM.ViewModel;
 using SimpleMechanicStationApp.OrderWindow.View;
 using SimpleMechanicStationApp.OrderWindow.ViewModel;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Input;
 
 namespace SimpleMechanicStationApp.MainWindow.ViewModel
@@ -27,9 +29,9 @@ namespace SimpleMechanicStationApp.MainWindow.ViewModel
                 OnPropertyChanged(nameof(CurrentUserName));
             }
         }
-
-        public ObservableCollection<OrderButtonViewModel> Orders { get; }
-        public ICommand OpenOrderButton { get; }
+        public ObservableCollection<OrderButtonViewModel> Orders { get; set; }
+        public ICommand OpenOrderButton { get; set; }
+        public ICommand AddItem { get; set; }
 
         //Constructor
         public MainWindowViewModel()
@@ -37,27 +39,41 @@ namespace SimpleMechanicStationApp.MainWindow.ViewModel
             _dbCommands.DownloadUserAccount(_currentUser);
             Orders = new ObservableCollection<OrderButtonViewModel>();
             LoadOrders();
-
-            OpenOrderButton = new ViewModelCommand<OrderButtonViewModel>(ExecuteOpenOrderButtonCommand);
+            OpenOrderButton = new ViewModelCommand<OrderButtonViewModel>(ExecuteOpenOrderButton);
+            AddItem = new ViewModelCommand<object>(ExecuteAddItem);
         }
 
         // Methods
         private void LoadOrders()
         {
             var orders = _dbCommands.DownloadOrders();
+
+            var ordersToRemove = Orders.Where(order => !orders.Any(newOrder => newOrder.OrderId == order.OrderId)).ToList();
+            foreach (var orderToRemove in ordersToRemove)
+            {
+                Orders.Remove(orderToRemove);
+            }
+
             foreach (var order in orders)
             {
-                var orderButtonViewModel = new OrderButtonViewModel()
+                var existingOrder = Orders.FirstOrDefault(existing => existing.OrderId == order.OrderId);
+                if (existingOrder != null)
                 {
-                    OrderId = order.OrderId,
-                    Summary = order.Summary,
-                    IsEnabled = true
-                };
-                Orders.Add(orderButtonViewModel);
+                    existingOrder.Summary = order.Summary;
+                }
+                else
+                {
+                    var orderButtonViewModel = new OrderButtonViewModel()
+                    {
+                        OrderId = order.OrderId,
+                        Summary = order.Summary,
+                        IsEnabled = true
+                    };
+                    Orders.Add(orderButtonViewModel);
+                }
             }
         }
-
-        private void ExecuteOpenOrderButtonCommand(OrderButtonViewModel selectedOrder)
+        private void ExecuteOpenOrderButton(OrderButtonViewModel selectedOrder)
         {
             var orderWindowViewModel = new OrderWindowViewModel(selectedOrder.OrderId);
             var orderWindowView = new OrderWindowView()
@@ -66,14 +82,13 @@ namespace SimpleMechanicStationApp.MainWindow.ViewModel
             };
             orderWindowView.Closed += OrderWindowViewClosed;
             orderWindowView.Show();
-
             selectedOrder.IsEnabled = false;
         }
-
         private void OrderWindowViewClosed(object? sender, EventArgs e)
         {
             if (sender is OrderWindowView orderWindowView && orderWindowView.DataContext is OrderWindowViewModel orderWindowViewModel)
             {
+                LoadOrders();
                 foreach (var order in Orders)
                 {
                     if (orderWindowViewModel.OrderId == order.OrderId)
@@ -83,6 +98,16 @@ namespace SimpleMechanicStationApp.MainWindow.ViewModel
                     }
                 }
             }
+        }
+        private void ExecuteAddItem(object obj) 
+        {
+            var orderWindowViewModel = new OrderWindowViewModel();
+            var orderWindowView = new OrderWindowView()
+            {
+                DataContext = orderWindowViewModel
+            };
+            orderWindowView.Closed += OrderWindowViewClosed;
+            orderWindowView.Show();
         }
     }
 }

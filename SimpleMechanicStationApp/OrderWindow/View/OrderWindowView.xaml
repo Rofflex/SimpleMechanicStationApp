@@ -1,9 +1,8 @@
-﻿<Window
+﻿<Window x:Class="SimpleMechanicStationApp.OrderWindow.View.OrderWindowView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        x:Class="SimpleMechanicStationApp.OrderWindow.View.OrderWindowView"
         mc:Ignorable="d"
         Title="OrderWindowView" 
         Height="800" Width="1000" 
@@ -63,7 +62,7 @@
             <RowDefinition Height="1*"/>
             <RowDefinition Height="0.35*"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0">
+        <Grid x:Name="OrderInfo" Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1.3*"/>
                 <ColumnDefinition Width="3*"/>
@@ -75,168 +74,158 @@
                 <RowDefinition Height="1.5*"/>
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
-
-            <Grid Grid.Row="0" Grid.Column="0">
+            <Grid x:Name="OrderId" Grid.Row="0" Grid.Column="0">
                 <StackPanel VerticalAlignment="Center" Margin="10,0,10,0">
-                    <TextBlock DockPanel.Dock="Top" Text="Order"/>
+                    <TextBlock Text="Order"/>
                     <TextBox x:Name="TextBoxOrderId" 
                              Style="{DynamicResource RoundedTextBox_Style_1}"
                              Grid.Row="1" 
                              Margin="0,0,0,0"
                              Text="{Binding OrderId, UpdateSourceTrigger=LostFocus}"
-                             IsReadOnly="{Binding IsReadOnly}"/>
+                             IsReadOnly="True"/>
                 </StackPanel>
             </Grid>
-
-            <Grid Grid.Row="0" Grid.Column="1" Margin="0,2,0,2">
+            <Grid x:Name="MakeModelVIN" Grid.Row="0" Grid.Column="1" Margin="0,2,0,2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="2*"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel VerticalAlignment="Top" Margin="10,0,10,0">
-                    <TextBlock DockPanel.Dock="Top" Text="Make"/>
+                    <TextBlock Text="Make"/>
                     <TextBox Style="{DynamicResource RoundedTextBox_Style_1}"
-                         Grid.Row="1" 
-                         Margin="0,0,0,0"
-                         Text="{Binding CarMake, UpdateSourceTrigger=LostFocus}"
-                         IsReadOnly="{Binding IsReadOnly}"/>
+                             Grid.Row="1" 
+                             Margin="0,0,0,0"
+                             Text="{Binding CarMake, UpdateSourceTrigger=LostFocus}"
+                             IsReadOnly="True"/>
                 </StackPanel>
-
                 <StackPanel VerticalAlignment="Bottom" Margin="10,0,10,0" Grid.Column="0">
-                    <TextBlock DockPanel.Dock="Top" Text="Model"/>
+                    <TextBlock Text="Model"/>
                     <TextBox Style="{DynamicResource RoundedTextBox_Style_1}"
-                         Grid.Row="1" 
-                         Margin="0,0,0,0"
-                         Text="{Binding CarModel, UpdateSourceTrigger=LostFocus}"
-                         IsReadOnly="{Binding IsReadOnly}"/>
+                             Grid.Row="1" 
+                             Margin="0,0,0,0"
+                             Text="{Binding CarModel, UpdateSourceTrigger=LostFocus}"
+                             IsReadOnly="True"/>
                 </StackPanel>
                 <StackPanel VerticalAlignment="Center" Margin="10,0,10,0" Grid.Column="2">
-                    <TextBlock DockPanel.Dock="Top" Text="VIN"/>
+                    <TextBlock Text="VIN"/>
                     <TextBox Style="{DynamicResource RoundedTextBox_Style_1}"
                              Grid.Row="1" 
                              Margin="0,0,0,0"
                              Text="{Binding VIN, UpdateSourceTrigger=LostFocus}"
-                             IsReadOnly="{Binding IsReadOnly}"
+                             IsReadOnly="True"
                              FontSize="16"/>
                 </StackPanel>
             </Grid>
-
-            <Grid Grid.Row="0" Grid.Column="2">
+            <Grid x:Name="Year" Grid.Row="0" Grid.Column="2">
                 <StackPanel VerticalAlignment="Center" Margin="10,0,10,0">
-                    <TextBlock DockPanel.Dock="Top" Text="Year"/>
+                    <TextBlock Text="Year"/>
                     <TextBox Style="{DynamicResource RoundedTextBox_Style_1}"
-                         Grid.Row="1" 
-                         Margin="0,0,0,0"
-                         Text="{Binding CarYear, UpdateSourceTrigger=LostFocus}"
-                         IsReadOnly="{Binding IsReadOnly}"/>
+                             Grid.Row="1" 
+                             Margin="0,0,0,0"
+                             Text="{Binding CarYear, UpdateSourceTrigger=LostFocus}"
+                             IsReadOnly="True"/>
                 </StackPanel>
             </Grid>
-
-            <Grid Grid.Row="0" Grid.Column="3">
+            <Grid x:Name="Plate" Grid.Row="0" Grid.Column="3">
                 <StackPanel VerticalAlignment="Center" Margin="10,0,10,0">
-                    <TextBlock DockPanel.Dock="Top" Text="Plate"/>
+                    <TextBlock Text="Plate"/>
                     <TextBox Style="{DynamicResource RoundedTextBox_Style_1}"
-                         Grid.Row="1" 
-                         Margin="0,0,0,0"
-                         Text="{Binding CarPlate, UpdateSourceTrigger=LostFocus}"
-                         IsReadOnly="{Binding IsReadOnly}"/>
+                             Grid.Row="1" 
+                             Margin="0,0,0,0"
+                             Text="{Binding CarPlate, UpdateSourceTrigger=LostFocus}"
+                             IsReadOnly="{Binding IsReadOnly}"/>
                 </StackPanel>
             </Grid>
-
-            <Grid Grid.Row="0" Grid.Column="4" Margin="0,2,0,2">
+            <Grid x:Name="Odometer" Grid.Row="0" Grid.Column="4" Margin="0,2,0,2">
                 <StackPanel VerticalAlignment="Top" Grid.Column="3" Margin="0,0,0,0">
-                    <TextBlock DockPanel.Dock="Top" Text="Odometer before"/>
+                    <TextBlock Text="Odometer before"/>
                     <TextBox Style="{DynamicResource RoundedTextBox_Style_1}"
-                         Grid.Row="1" 
-                         Margin="5,0,5,0"
-                         Text="{Binding CarOdometerStart, UpdateSourceTrigger=LostFocus}"
-                         IsReadOnly="{Binding IsReadOnly}"/>
+                             Grid.Row="1" 
+                             Margin="5,0,5,0"
+                             Text="{Binding CarOdometerStart, UpdateSourceTrigger=LostFocus}"
+                             IsReadOnly="{Binding IsReadOnly}"/>
                 </StackPanel>
                 <StackPanel VerticalAlignment="Bottom" Grid.Column="3" Margin="0,0,0,0">
-                    <TextBlock DockPanel.Dock="Top" Text="Odometer after"/>
+                    <TextBlock Text="Odometer after"/>
                     <TextBox Style="{DynamicResource RoundedTextBox_Style_1}"
-                         Grid.Row="1" 
-                         Margin="5,0,5,0"
-                         Text="{Binding CarOdometerFinish, UpdateSourceTrigger=LostFocus}"
-                         IsReadOnly="{Binding IsReadOnly}"/>
+                             Grid.Row="1" 
+                             Margin="5,0,5,0"
+                             Text="{Binding CarOdometerFinish, UpdateSourceTrigger=LostFocus}"
+                             IsReadOnly="{Binding IsReadOnly}"/>
                 </StackPanel>
             </Grid>
-
-            <Grid Grid.Row="2" Grid.Column="0">
+            <Grid x:Name="Car" Grid.Row="2" Grid.Column="0">
                 <StackPanel VerticalAlignment="Center" Margin="10,0,10,0">
-                    <TextBlock DockPanel.Dock="Top" Text="Car"/>
-                    <TextBox Style="{DynamicResource RoundedTextBox_Style_1}"
-                         Grid.Row="1" 
-                         Margin="0,0,0,0"
-                         Text="{Binding CarName, UpdateSourceTrigger=LostFocus}"
-                         IsReadOnly="{Binding IsReadOnly}"/>
+                    <TextBlock Text="Car"/>
+                    <TextBox x:Name="CarName" Style="{DynamicResource RoundedTextBox_Style_1}"
+                             Grid.Row="1" 
+                             Margin="0,0,0,0"
+                             Text="{Binding CarName, UpdateSourceTrigger=LostFocus}"
+                             IsReadOnly="True"
+                             MouseDoubleClick="TextBox_MouseDoubleClick_ChooseCar"/>
                 </StackPanel>
             </Grid>
-
-            <Grid Grid.Row="2" Grid.Column="1">
+            <Grid x:Name="NameAddress" Grid.Row="2" Grid.Column="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <StackPanel VerticalAlignment="Center" Margin="10,0,10,0">
-                    <TextBlock DockPanel.Dock="Top" Text="Name"/>
+                    <TextBlock Text="Name"/>
                     <TextBox Style="{DynamicResource RoundedTextBox_Style_1}"
-                         Grid.Row="1" 
-                         Margin="0,0,0,0"
-                         Text="{Binding CustomerName, UpdateSourceTrigger=LostFocus}"
-                         IsReadOnly="{Binding IsReadOnly}"/>
+                             Grid.Row="1" 
+                             Margin="0,0,0,0"
+                             Text="{Binding CustomerName, UpdateSourceTrigger=LostFocus}"
+                             IsReadOnly="True"
+                             MouseDoubleClick="TextBox_MouseDoubleClick_ChooseCustomer"/>
                 </StackPanel>
                 <StackPanel VerticalAlignment="Center" Margin="10,0,10,0" Grid.Column="1">
-                    <TextBlock DockPanel.Dock="Top" Text="Address"/>
+                    <TextBlock Text="Address"/>
                     <TextBox Style="{DynamicResource RoundedTextBox_Style_1}"
                          Grid.Row="1" 
                          Margin="0,0,0,0"
                          Text="{Binding CustomerAddress, UpdateSourceTrigger=LostFocus}"
-                         IsReadOnly="{Binding IsReadOnly}"/>
+                         IsReadOnly="True"/>
                 </StackPanel>
             </Grid>
-
-            <Grid Grid.Row="2" Grid.Column="2">
+            <Grid x:Name="Phone" Grid.Row="2" Grid.Column="2">
                 <StackPanel VerticalAlignment="Center" Margin="10,0,10,0">
-                    <TextBlock DockPanel.Dock="Top" Text="Phone"/>
+                    <TextBlock Text="Phone"/>
                     <TextBox Style="{DynamicResource RoundedTextBox_Style_1}"
-                         Grid.Row="1" 
-                         Margin="0,0,0,0"
-                         Text="{Binding CustomerPhone, UpdateSourceTrigger=LostFocus}"
-                         IsReadOnly="{Binding IsReadOnly}"/>
+                             Grid.Row="1" 
+                             Margin="0,0,0,0"
+                             Text="{Binding CustomerPhone, UpdateSourceTrigger=LostFocus}"
+                             IsReadOnly="True"/>
                 </StackPanel>
             </Grid>
-
-            <Grid Grid.Row="2" Grid.Column="3">
+            <Grid x:Name="OpenDate" Grid.Row="2" Grid.Column="3">
                 <StackPanel VerticalAlignment="Center" Margin="10,0,10,0">
-                    <TextBlock DockPanel.Dock="Top" Text="Open date"/>
+                    <TextBlock Text="Open date"/>
                     <TextBox Style="{DynamicResource RoundedTextBox_Style_1}"
-                         Grid.Row="1" 
-                         Margin="0,0,0,0"
-                         Text="{Binding OrderOpenDate, UpdateSourceTrigger=LostFocus}"
-                         IsReadOnly="{Binding IsReadOnly}"/>
+                             Grid.Row="1" 
+                             Margin="0,0,0,0"
+                             Text="{Binding OrderOpenDate, UpdateSourceTrigger=LostFocus}"
+                             IsReadOnly="{Binding IsReadOnly}"/>
                 </StackPanel>
             </Grid>
-
-            <Grid Grid.Row="2" Grid.Column="4">
+            <Grid x:Name="CloseDate" Grid.Row="2" Grid.Column="4">
                 <StackPanel VerticalAlignment="Center" Margin="10,0,10,0">
-                    <TextBlock DockPanel.Dock="Top" Text="Close date"/>
+                    <TextBlock Text="Close date"/>
                     <TextBox Style="{DynamicResource RoundedTextBox_Style_1}"
-                         Grid.Row="1" 
-                         Margin="0,0,0,0"
-                         Text="{Binding OrderCloseDate, UpdateSourceTrigger=LostFocus}"
-                         IsReadOnly="{Binding IsReadOnly}"/>
+                             Grid.Row="1" 
+                             Margin="0,0,0,0"
+                             Text="{Binding OrderCloseDate, UpdateSourceTrigger=LostFocus}"
+                             IsReadOnly="{Binding IsReadOnly}"/>
                 </StackPanel>
             </Grid>
         </Grid>
         <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="10"/>
-        <Grid Grid.Row="1">
+        <Grid x:Name="DataGrids" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="0.05*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="0.05*"/>
             </Grid.ColumnDefinitions>
-
             <TabControl Style="{DynamicResource TabControlCustomStyle}" Grid.Column="1" 
                         FontFamily="Times New Roman"
                         FontSize="16">
@@ -254,7 +243,7 @@
                         </Grid.RowDefinitions>
                         <DataGrid ItemsSource="{Binding Parts, UpdateSourceTrigger=PropertyChanged}"
                                   AutoGenerateColumns="False" 
-                                  CanUserAddRows="True"
+                                  CanUserAddRows="False"
                                   CanUserDeleteRows="True"
                                   CanUserResizeRows="False"
                                   CanUserReorderColumns="False"
@@ -273,19 +262,22 @@
                                   VerticalGridLinesBrush="Gray"
                                   HorizontalGridLinesBrush="Gray"
                                   Grid.Row="1"
-                                  IsReadOnly="{Binding IsReadOnly}">
+                                  IsReadOnly="{Binding IsReadOnly}"
+                                  SelectedItem="{Binding SelectedItemParts}">
 
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Part ID" 
                                                     Binding="{Binding PartId, UpdateSourceTrigger=LostFocus}"
-                                                    Width="*">
+                                                    Width="*"
+                                                    IsReadOnly="True">
                                     <DataGridTextColumn.ElementStyle>
                                         <Style TargetType="{x:Type TextBlock}">
                                             <Setter Property="TextWrapping" Value="Wrap"/>
                                         </Style>
                                     </DataGridTextColumn.ElementStyle>
                                     <DataGridTextColumn.CellStyle>
-                                        <Style TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource {x:Type DataGridCell}}">
+                                        <Style TargetType="{x:Type DataGridCell}" 
+                                               BasedOn="{StaticResource {x:Type DataGridCell}}">
                                             <Setter Property="BorderThickness" Value="1,0,0,0" />
                                             <Setter Property="BorderBrush" Value="Gray" />
                                             <Setter Property="Background" Value="{StaticResource Controls.BackGround.Blue}"/>
@@ -316,28 +308,63 @@
                                         </Style>
                                     </DataGridTextColumn.HeaderStyle>
                                 </DataGridTextColumn>
-                                <DataGridTextColumn Header="Description" Binding="{Binding PartDescription, UpdateSourceTrigger=LostFocus}" Width="1.95*">
+                                <DataGridTextColumn Header="Description" 
+                                                    Binding="{Binding PartName, UpdateSourceTrigger=LostFocus}" 
+                                                    Width="1.95*"
+                                                    IsReadOnly="True">
                                     <DataGridTextColumn.ElementStyle>
                                         <Style TargetType="{x:Type TextBlock}">
                                             <Setter Property="TextWrapping" Value="Wrap" />
                                         </Style>
                                     </DataGridTextColumn.ElementStyle>
                                 </DataGridTextColumn>
-                                <DataGridTextColumn Header="Manufacture" Binding="{Binding ManufactureName, UpdateSourceTrigger=LostFocus}" Width="*">
+                                <DataGridTextColumn Header="Manufacture" 
+                                                    Binding="{Binding ManufactureName, UpdateSourceTrigger=LostFocus}" 
+                                                    Width="*"
+                                                    IsReadOnly="True">
                                     <DataGridTextColumn.ElementStyle>
                                         <Style TargetType="{x:Type TextBlock}">
                                             <Setter Property="TextWrapping" Value="Wrap" />
                                         </Style>
                                     </DataGridTextColumn.ElementStyle>
                                 </DataGridTextColumn>
-                                <DataGridTextColumn Header="Retail price" Binding="{Binding PartRetailPrice, UpdateSourceTrigger=LostFocus}" Width="*"/>
-                                <DataGridTextColumn Header="Sale price" Binding="{Binding PartTradePrice, UpdateSourceTrigger=LostFocus}" Width="*"/>
-                                <DataGridTextColumn Header="Sold price" Binding="{Binding PartSoldPrice, UpdateSourceTrigger=LostFocus}" Width="*"/>
-                                <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity, UpdateSourceTrigger=LostFocus}" Width="*"/>
-                                <DataGridTextColumn Header="Summary" Binding="{Binding Summary, UpdateSourceTrigger=LostFocus}" Width="152"/>
+                                <DataGridTextColumn Header="Retail price" 
+                                                    Binding="{Binding PartRetailPrice, UpdateSourceTrigger=LostFocus}" 
+                                                    Width="*"
+                                                    IsReadOnly="True"/>
+                                <DataGridTextColumn Header="Sale price" 
+                                                    Binding="{Binding PartTradePrice, UpdateSourceTrigger=LostFocus}" 
+                                                    Width="*"
+                                                    IsReadOnly="True"/>
+                                <DataGridTextColumn Header="Sold price" 
+                                                    Binding="{Binding PartSoldPrice, UpdateSourceTrigger=LostFocus}" 
+                                                    Width="*"/>
+                                <DataGridTextColumn Header="Quantity" 
+                                                    Binding="{Binding Quantity, UpdateSourceTrigger=LostFocus}" 
+                                                    Width="*"/>
+                                <DataGridTextColumn Header="Summary" 
+                                                    Binding="{Binding Summary, UpdateSourceTrigger=LostFocus}" 
+                                                    Width="152" 
+                                                    IsReadOnly="True"/>
                             </DataGrid.Columns>
                         </DataGrid>
-                        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <StackPanel Grid.Row="2" 
+                                    Orientation="Horizontal" 
+                                    HorizontalAlignment="Left">
+                            <Button x:Name="AddButtonParts"
+                                    Content="Add" 
+                                    Margin="5,0,0,5"
+                                    Width="Auto" 
+                                    Style="{DynamicResource RoundButtonCornerStyle_1}" 
+                                    BorderBrush="Gray" 
+                                    Padding="30,5,30,5" 
+                                    Background="{StaticResource Controls.BackGround.Blue}"
+                                    Command="{Binding AddParts}"
+                                    IsEnabled="{Binding IsEditing}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Row="2" 
+                                    Orientation="Horizontal" 
+                                    HorizontalAlignment="Right">
                             <Button x:Name="EditButtonParts"
                                     Content="Edit" 
                                     Margin="0,0,5,5"
@@ -346,7 +373,7 @@
                                     BorderBrush="Gray" 
                                     Padding="30,5,30,5" 
                                     Background="{StaticResource Controls.BackGround.Blue}"
-                                    Command="{Binding EditCommand}"
+                                    Command="{Binding Edit}"
                                     IsEnabled="{Binding IsReadOnly}"/>
                             <Button x:Name="SaveButtonParts"
                                     Content="Save" 
@@ -356,7 +383,7 @@
                                     BorderBrush="Gray" 
                                     Padding="30,5,30,5" 
                                     Background="{StaticResource Controls.BackGround.Blue}"
-                                    Command="{Binding SaveCommand}"
+                                    Command="{Binding Save}"
                                     IsEnabled="{Binding IsEditing}"/>
                         </StackPanel>
                     </Grid>
@@ -374,7 +401,7 @@
                                   ItemsSource="{Binding Labors, UpdateSourceTrigger=PropertyChanged}" 
                                   AutoGenerateColumns="False" 
                                   CanUserAddRows="False"
-                                  CanUserDeleteRows="False"
+                                  CanUserDeleteRows="True"
                                   CanUserResizeRows="False"
                                   CanUserReorderColumns="False"
                                   CanUserResizeColumns="False"
@@ -392,11 +419,14 @@
                                   VerticalGridLinesBrush="Gray"
                                   HorizontalGridLinesBrush="Gray"
                                   Grid.Row="1"
-                                  IsReadOnly="{Binding IsReadOnly}">
+                                  IsReadOnly="{Binding IsReadOnly}"
+                                  SelectedItem="{Binding SelectedItemLabors}">
 
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Labor ID" Binding="{Binding LaborId, UpdateSourceTrigger=LostFocus}" Visibility="Hidden"/>
-                                <DataGridTextColumn Header="Labors performed" Binding="{Binding LaborName, UpdateSourceTrigger=LostFocus}" Width="2*">
+                                <DataGridTextColumn Header="Labors performed" 
+                                                    Binding="{Binding LaborName, UpdateSourceTrigger=LostFocus}" 
+                                                    Width="2*"
+                                                    IsReadOnly="True">
                                     <DataGridTextColumn.ElementStyle>
                                         <Style TargetType="{x:Type TextBlock}">
                                             <Setter Property="TextWrapping" Value="Wrap" />
@@ -434,11 +464,36 @@
                                         </Style>
                                     </DataGridTextColumn.HeaderStyle>
                                 </DataGridTextColumn>
-                                <DataGridTextColumn Header="Hours" Binding="{Binding LaborHours, UpdateSourceTrigger=LostFocus}" Width="0.2*"/>
-                                <DataGridTextColumn Header="Mechanic" Binding="{Binding MechanicName, UpdateSourceTrigger=LostFocus}" Width="0.3*"/>
-                                <DataGridTextColumn Header="Price" Binding="{Binding LaborSoldPrice, UpdateSourceTrigger=LostFocus}" Width="152"/>
+                                <DataGridTextColumn Header="Hours" 
+                                                    Binding="{Binding LaborHours, UpdateSourceTrigger=LostFocus}" 
+                                                    Width="0.2*"
+                                                    IsReadOnly="True"/>
+                                <DataGridTextColumn Header="Sold hours" 
+                                                    Binding="{Binding LaborSoldHours, UpdateSourceTrigger=LostFocus}" 
+                                                    Width="0.32*"/>
+                                <DataGridTextColumn Header="Mechanic" 
+                                                    Binding="{Binding MechanicName, UpdateSourceTrigger=LostFocus}" 
+                                                    Width="0.3*"
+                                                    IsReadOnly="True"/>
+                                <DataGridTextColumn Header="Price" 
+                                                    Binding="{Binding LaborSoldPrice, UpdateSourceTrigger=LostFocus}" 
+                                                    Width="152"/>
                             </DataGrid.Columns>
                         </DataGrid>
+                        <StackPanel Grid.Row="2" 
+                                    Orientation="Horizontal" 
+                                    HorizontalAlignment="Left">
+                            <Button x:Name="AddButtonLabors"
+                                    Content="Add" 
+                                    Margin="5,0,0,5"
+                                    Width="Auto" 
+                                    Style="{DynamicResource RoundButtonCornerStyle_1}" 
+                                    BorderBrush="Gray" 
+                                    Padding="30,5,30,5" 
+                                    Background="{StaticResource Controls.BackGround.Blue}"
+                                    Command="{Binding AddLabors}"
+                                    IsEnabled="{Binding IsEditing}"/>
+                        </StackPanel>
                         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
                             <Button x:Name="EditButtonLabor"
                                     Content="Edit" 
@@ -448,7 +503,7 @@
                                     BorderBrush="Gray" 
                                     Padding="30,5,30,5" 
                                     Background="{StaticResource Controls.BackGround.Blue}"
-                                    Command="{Binding EditCommand}"
+                                    Command="{Binding Edit}"
                                     IsEnabled="{Binding IsReadOnly}"/>
                             <Button x:Name="SaveButtonLabor"
                                     Content="Save" 
@@ -458,7 +513,7 @@
                                     BorderBrush="Gray" 
                                     Padding="30,5,30,5" 
                                     Background="{StaticResource Controls.BackGround.Blue}"
-                                    Command="{Binding SaveCommand}"
+                                    Command="{Binding Save}"
                                     IsEnabled="{Binding IsEditing}"/>
                         </StackPanel>
                     </Grid>
@@ -466,7 +521,7 @@
             </TabControl>
         </Grid>
 
-        <Grid Grid.Row="2" ShowGridLines="False">
+        <Grid x:Name="Amounts" Grid.Row="2" ShowGridLines="False">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*"/>
                 <ColumnDefinition Width="49*"/>
@@ -506,7 +561,7 @@
                            FontStyle="Italic"/>
             </Grid>
             <Border Grid.Row="1" Grid.Column="2" BorderBrush="Gray" BorderThickness="1,0,0,0">
-                <TextBlock Text="{Binding SalesTax, UpdateSourceTrigger=PropertyChanged}"
+                <TextBlock Text="{Binding TaxAmount, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:F2}}"
                            FontSize="16"
                            FontStyle="Italic"/>
             </Border>
@@ -516,9 +571,10 @@
                            FontStyle="Italic"/>
             </Grid>
             <Border Grid.Row="2" Grid.Column="2" BorderBrush="Gray" BorderThickness="1,0,0,0">
-                <TextBlock Text="{Binding WasteMaterialFee, UpdateSourceTrigger=PropertyChanged}"
-                           FontSize="16"
-                           FontStyle="Italic"/>
+                <CheckBox IsEnabled="{Binding IsEditing}"  
+                          IsChecked="{Binding WasteMaterialFeeIncluded, UpdateSourceTrigger=PropertyChanged}"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"/>
             </Border>
             <Grid Grid.Row="3" Grid.Column="1">
                 <TextBlock Text="PERFORMED LABOR COST"

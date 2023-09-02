@@ -1,7 +1,6 @@
 ﻿using SimpleMechanicStationApp.GeneralMethods.DBMethods.DBConnection;
 using SimpleMechanicStationApp.GeneralVMM.CurrentUserM.Model;
 using SimpleMechanicStationApp.GeneralVMM.OrderButtonVMM.ViewModel;
-using SimpleMechanicStationApp.GeneralVMM.OrderM.Model;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -11,17 +10,15 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands
 {
     public class DBCommands : Connection, IDBCommands
     {
+        // Singleton
         private static readonly DBCommands instance = new DBCommands();
         private DBCommands()
         {
 
         }
+        public static DBCommands Instance => instance;
 
-        public static DBCommands Instance
-        {
-            get { return instance; }
-        }
-
+        // Methods
         public int AuthUser(string UserName, string Password) //return 0 - no connection db; 1 - wrong log pass; 2 - connection established
         {
             int ValidConnection;
@@ -39,7 +36,7 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands
                         ValidConnection = cmd.ExecuteScalar() == null ? 1 : 2;
                     }
                 }
-                catch (SqlException ex)
+                catch (SqlException)
                 {
                     ValidConnection = 0;
                 }
@@ -47,7 +44,6 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands
             }
             return ValidConnection;
         }
-
         public List<OrderButtonViewModel> DownloadOrders()
         {
             var orders = new List<OrderButtonViewModel>();
@@ -59,7 +55,8 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands
                     {
                         con.Open();
                         cmd.Connection = con;
-                        cmd.CommandText = "select OrderId, (CarMake +' '+ CarModel +' '+ VIN +' '+ Convert(varchar, CarYear) +' '+ CarPlate) as \"Summary\" " +
+                        cmd.CommandText = "select OrderId, (COALESCE(CarMake, '') +' '+ COALESCE(CarModel, '') +' '+ COALESCE(VIN, '') +' '" +
+                            "+ COALESCE(Convert(varchar, CarYear), '') +' '+ COALESCE(CarPlate, '')) as \"Summary\" " +
                             "from dbo.[Order] inner join dbo.[CarInfo] on dbo.[Order].CarId = dbo.[CarInfo].CarId";
                         using (var reader = cmd.ExecuteReader())
                         {
@@ -84,7 +81,6 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands
             }
             return orders;
         }
-
         public void DownloadUserAccount(CurrentUser currentUserModel)
         {
             using (var con = GetConnection())
@@ -116,73 +112,25 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands
                 finally { con.Close(); }
             }
         }
-
-        public Order UpdateOrder(int orderId)
-        {
-            var order = new Order();
-            using (var con = GetConnection())
-            {
-                try
-                {
-                    using (var cmd = new SqlCommand())
-                    {
-                        con.Open();
-                        cmd.Connection = con;
-                        cmd.CommandText = "select [Order].CarId, CarMake, CarModel,CarOdometerStart, CarOdometerFinish, " +
-                            "CarPlate, CarYear, CustomerName, CustomerPhone, CustomerAddress, OrderOpenDate, OrderCloseDate, " +
-                            "[Order].VIN, (CarMake +' '+ CarModel) as CarName " +
-                            "from Customer inner join [Order] on Customer.CustomerId=[Order].CustomerId " +
-                            "inner join [CarInfo] on [Order].CarId = [CarInfo].CarId " +
-                            "inner join VINList on VINList.VIN=[Order].VIN " +
-                            "where OrderId=@OrderId";
-                        cmd.Parameters.Add("OrderId", System.Data.SqlDbType.Int).Value = orderId;
-                        order.OrderId = orderId;
-                        using (var reader = cmd.ExecuteReader())
-                        {
-
-                            if (reader.Read())
-                            {
-                                order.CarId = reader.IsDBNull(0) ? 0 : reader.GetInt32(0);
-                                order.CarMake = reader.IsDBNull(1) ? "" : reader.GetString(1);
-                                order.CarModel = reader.IsDBNull(2) ? "" : reader.GetString(2);
-                                order.CarOdometerStart = reader.IsDBNull(3) ? 0 : reader.GetDouble(3);
-                                order.CarOdometerFinish = reader.IsDBNull(4) ? 0 : reader.GetDouble(4);
-                                order.CarPlate = reader.IsDBNull(5) ? "" : reader.GetString(5);
-                                order.CarYear = reader.IsDBNull(6) ? 0 : reader.GetInt16(6);
-                                order.CustomerName = reader.IsDBNull(7) ? "" : reader.GetString(7);
-                                order.CustomerPhone = reader.IsDBNull(8) ? "" : reader.GetString(8);
-                                order.CustomerAddress = reader.IsDBNull(9) ? "" : reader.GetString(9);
-                                order.OrderOpenDate = reader.IsDBNull(10) ? DateTime.MinValue : reader.GetDateTime(10);
-                                order.OrderCloseDate = reader.IsDBNull(11) ? DateTime.MinValue : reader.GetDateTime(11);
-                                order.VIN = reader.IsDBNull(12) ? "" : reader.GetString(12);
-                                order.CarName = reader.IsDBNull(13) ? "" : reader.GetString(13);
-                            }
-                        }
-                    }
-                }
-                catch (SqlException ex)
-                {
-                    MessageBox.Show(ex.ToString());
-                }
-                finally { con.Close(); }
-            }
-            return order;
-        }
-
-        public List<T> GetItemsForOrder<T>(int orderId, string commandText)
+        public List<T> GetItemsForList<T, K>(K id, string commandText)
         {
             var items = new List<T>();
-
             using (SqlConnection con = GetConnection())
             {
                 try
                 {
-                    using (SqlCommand cmd = new SqlCommand())
+                    con.Open();
+                    using (SqlCommand cmd = new SqlCommand(commandText, con))
                     {
-                        con.Open();
-                        cmd.Connection = con;
-                        cmd.CommandText = commandText;
-                        cmd.Parameters.Add("OrderId", System.Data.SqlDbType.Int).Value = orderId;
+
+                        if (id?.GetType() == typeof(int))
+                        {
+                            cmd.Parameters.Add("id", System.Data.SqlDbType.Int).Value = id;
+                        }
+                        else if (id?.GetType() == typeof(string))
+                        {
+                            cmd.Parameters.Add("id", System.Data.SqlDbType.VarChar).Value = id;
+                        }
 
                         using (SqlDataReader reader = cmd.ExecuteReader())
                         {
@@ -215,7 +163,714 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands
             }
             return items;
         }
+        public List<T> GetItemsForList<T>(string commandText, Dictionary<string, object> nameIdPair)
+        {
+            var items = new List<T>();
+            using (SqlConnection con = GetConnection())
+            {
+                try
+                {
+                    con.Open();
+                    using (SqlCommand cmd = new SqlCommand(commandText, con))
+                    {
+                        foreach(var pair in nameIdPair) 
+                        {
+                            if (commandText.Contains($"@{pair.Key}"))
+                            {
+                                cmd.Parameters.AddWithValue($"@{pair.Key}", pair.Value);
+                            }
+                        }
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                T item = Activator.CreateInstance<T>();
 
+                                var properties = typeof(T).GetProperties();
+                                foreach (var property in properties)
+                                {
+                                    bool hasReaderProperty = CheckReaderProperty(reader, property.Name);
+
+                                    if (hasReaderProperty)
+                                    {
+                                        var value = Convert.ChangeType(reader[property.Name], property.PropertyType);
+                                        property.SetValue(item, value);
+                                    }
+                                }
+
+                                items.Add(item);
+                            }
+                        }
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+                finally { con.Close(); }
+            }
+            return items;
+        }
+        public List<T> GetItemsForList<T>(string commandText)
+        {
+            var items = new List<T>();
+
+            using (SqlConnection con = GetConnection())
+            {
+                try
+                {
+                    con.Open();
+                    using (SqlCommand cmd = new SqlCommand(commandText, con))
+                    {
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                T item = Activator.CreateInstance<T>();
+
+                                var properties = typeof(T).GetProperties();
+                                foreach (var property in properties)
+                                {
+                                    bool hasReaderProperty = CheckReaderProperty(reader, property.Name);
+
+                                    if (hasReaderProperty)
+                                    {
+                                        var value = Convert.ChangeType(reader[property.Name], property.PropertyType);
+                                        property.SetValue(item, value);
+                                    }
+                                }
+
+                                items.Add(item);
+                            }
+                        }
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+                finally { con.Close(); }
+            }
+            return items;
+        }
+        public int SaveItem(object item, string selectQueryId, string selectQuery, string updateQuery, string uploadQuery, Dictionary<string, object> nameIdPairs)
+        {
+            int flag = 0;
+            using (SqlConnection con = GetConnection())
+            {
+                con.Open();
+                SqlTransaction transaction = con.BeginTransaction();
+                try
+                {
+                    var itemType = item.GetType();
+                    var itemProperties = itemType.GetProperties();
+                    if (item is not null)
+                    {
+                        object result;
+                        // Check item with nameId pair                        
+                        using (SqlCommand selectCommand = new SqlCommand(selectQueryId, con, transaction))
+                        {
+                            selectCommand.Parameters.Clear();
+                            foreach (var pair in nameIdPairs)
+                            {
+                                if (selectCommand.CommandText.Contains($"@{pair.Key}"))
+                                {
+                                    selectCommand.Parameters.AddWithValue($"@{pair.Key}", pair.Value);
+                                }
+                            }
+                            result = selectCommand.ExecuteScalar();
+                        }
+
+                        // If Id is not found, check the same item and other properties. And replace result
+                        if (result is null)
+                        {
+                            using (SqlCommand selectCommand = new SqlCommand(selectQuery, con, transaction))
+                            {
+                                selectCommand.Parameters.Clear();
+                                foreach (var property in itemProperties)
+                                {
+                                    var value = property.GetValue(item);
+                                    if (value is not null && selectCommand.CommandText.Contains($"@{property.Name}"))
+                                    {
+                                        selectCommand.Parameters.AddWithValue($"@{property.Name}", value);
+                                    }
+                                    else if (value is null && selectCommand.CommandText.Contains($"@{property.Name}"))
+                                    {
+                                        var propertyType = property.PropertyType;
+                                        value = propertyType == typeof(string) ?
+                                            "" : propertyType == typeof(int) ?
+                                            0 : propertyType == typeof(decimal) ?
+                                            0 : propertyType == typeof(DateTime) ?
+                                            DateTime.Now : 0;
+                                        selectCommand.Parameters.AddWithValue($"@{property.Name}", value);
+                                    }
+                                }
+                                result = selectCommand.ExecuteScalar();
+                            }
+                        }
+
+                        // If the same item is found than update properties
+                        if (result is not null)
+                        {
+                            using (SqlCommand updateCommand = new SqlCommand(updateQuery, con, transaction))
+                            {
+                                updateCommand.Parameters.Clear();
+                                foreach (var property in itemProperties)
+                                {
+                                    var value = property.GetValue(item);
+                                    if (value is not null && updateCommand.CommandText.Contains($"@{property.Name}"))
+                                    {
+                                        updateCommand.Parameters.AddWithValue($"@{property.Name}", value);
+                                    }
+                                    else if (value is null && updateCommand.CommandText.Contains($"@{property.Name}"))
+                                    {
+                                        var propertyType = property.PropertyType;
+                                        value = propertyType == typeof(string) ?
+                                            "" : propertyType == typeof(int) ?
+                                            0 : propertyType == typeof(decimal) ?
+                                            0 : propertyType == typeof(DateTime) ?
+                                            DateTime.Now : 0;
+                                        updateCommand.Parameters.AddWithValue($"@{property.Name}", value);
+                                    }
+                                }
+                                updateCommand.ExecuteNonQuery();
+                            }
+                        }
+                        // Otherwise insert new values to the table
+                        else
+                        {
+                            using (SqlCommand uploadCommand = new SqlCommand(uploadQuery, con, transaction))
+                            {
+                                uploadCommand.Parameters.Clear();
+                                foreach (var property in itemProperties)
+                                {
+                                    var value = property.GetValue(item);
+                                    if (value is not null && uploadCommand.CommandText.Contains($"@{property.Name}"))
+                                    {
+                                        uploadCommand.Parameters.AddWithValue($"@{property.Name}", value);
+                                    }
+                                    else if (value is null && uploadCommand.CommandText.Contains($"@{property.Name}"))
+                                    {
+                                        var propertyType = property.PropertyType;
+                                        value = propertyType == typeof(string) ?
+                                            "" : propertyType == typeof(int) ?
+                                            0 : propertyType == typeof(decimal) ?
+                                            0 : propertyType == typeof(DateTime) ?
+                                            DateTime.Now : 0;
+                                        uploadCommand.Parameters.AddWithValue($"@{property.Name}", value);
+                                    }
+                                }
+                                uploadCommand.ExecuteNonQuery();
+                            }
+                        }
+                    }
+
+                    transaction.Commit();
+                    flag = 2;
+                }
+                catch (Exception ex)
+                {
+                    flag = 1;
+                    MessageBox.Show(ex.Message);
+                    transaction.Rollback();
+                }
+                finally { con.Close(); }
+            }
+            return flag;
+        }
+        public int SaveItem(object item, string selectQueryId, string selectQuery, string updateQuery, string uploadQuery) 
+        {
+            int flag = 0;
+            using (SqlConnection con = GetConnection())
+            {
+                con.Open();
+                SqlTransaction transaction = con.BeginTransaction();
+                try
+                {
+                    var itemType = item.GetType();
+                    var itemProperties = itemType.GetProperties();
+                    if (item is not null)
+                    {
+                        object result;
+                        // Check item with Id                        
+                        using (SqlCommand selectCommand = new SqlCommand(selectQueryId, con, transaction))
+                        {
+                            selectCommand.Parameters.Clear();
+                            foreach (var property in itemProperties)
+                            {
+                                var propertyName = property.Name;
+                                var propertyNameId = propertyName.Substring(propertyName.Length - 2); // Gets last 2 string letter
+
+                                if (propertyNameId == "Id" && selectCommand.CommandText.Contains($"@{propertyName}"))
+                                {
+                                    var value = property.GetValue(item);
+                                    selectCommand.Parameters.AddWithValue($"@{propertyName}", value);
+                                    break;
+                                }
+                            }
+                            result = selectCommand.ExecuteScalar();
+                        }
+
+                        // If Id is not found, check the same item and other properties. And replace result
+                        if (result is null)
+                        {                         
+                            using (SqlCommand selectCommand = new SqlCommand(selectQuery, con, transaction))
+                            {
+                                selectCommand.Parameters.Clear();
+                                foreach (var property in itemProperties)
+                                {
+                                    var value = property.GetValue(item);
+                                    if (value is not null && selectCommand.CommandText.Contains($"@{property.Name}"))
+                                    {
+                                        selectCommand.Parameters.AddWithValue($"@{property.Name}", value);
+                                    }
+                                    else if (value is null && selectCommand.CommandText.Contains($"@{property.Name}"))
+                                    {
+                                        var propertyType = property.PropertyType;
+                                        value = propertyType == typeof(string) ?
+                                            "" : propertyType == typeof(int) ?
+                                            0 : propertyType == typeof(decimal) ?
+                                            0 : propertyType == typeof(DateTime) ?
+                                            DateTime.Now : 0;
+                                        selectCommand.Parameters.AddWithValue($"@{property.Name}", value);
+                                    }
+                                }
+                                result = selectCommand.ExecuteScalar();
+                            }
+                        }
+
+                        // If the same item is found than update properties
+                        if (result is not null)
+                        {
+                            using (SqlCommand updateCommand = new SqlCommand(updateQuery, con, transaction))
+                            {
+                                updateCommand.Parameters.Clear();
+                                foreach (var property in itemProperties)
+                                {
+                                    var value = property.GetValue(item);
+                                    if (value is not null && updateCommand.CommandText.Contains($"@{property.Name}"))
+                                    {
+                                        updateCommand.Parameters.AddWithValue($"@{property.Name}", value);
+                                    }
+                                    else if (value is null && updateCommand.CommandText.Contains($"@{property.Name}"))
+                                    {
+                                        var propertyType = property.PropertyType;
+                                        value = propertyType == typeof(string) ?
+                                            "" : propertyType == typeof(int) ?
+                                            0 : propertyType == typeof(decimal) ?
+                                            0 : propertyType == typeof(DateTime) ?
+                                            DateTime.Now : 0;
+                                        updateCommand.Parameters.AddWithValue($"@{property.Name}", value);
+                                    }
+                                }
+                                updateCommand.ExecuteNonQuery();
+                            }
+                        }
+                        // Otherwise insert new values to the table
+                        else
+                        {
+                            using (SqlCommand uploadCommand = new SqlCommand(uploadQuery, con, transaction))
+                            {
+                                uploadCommand.Parameters.Clear();
+                                foreach (var property in itemProperties)
+                                {
+                                    var value = property.GetValue(item);
+                                    if (value is not null && uploadCommand.CommandText.Contains($"@{property.Name}"))
+                                    {
+                                        uploadCommand.Parameters.AddWithValue($"@{property.Name}", value);
+                                    }
+                                    else if (value is null && uploadCommand.CommandText.Contains($"@{property.Name}"))
+                                    {
+                                        var propertyType = property.PropertyType;
+                                        value = propertyType == typeof(string) ?
+                                            "" : propertyType == typeof(int) ?
+                                            0 : propertyType == typeof(decimal) ?
+                                            0 : propertyType == typeof(DateTime) ?
+                                            DateTime.Now : 0;
+                                        uploadCommand.Parameters.AddWithValue($"@{property.Name}", value);
+                                    }
+                                }
+                                uploadCommand.ExecuteNonQuery();
+                            }
+                        }
+                    }
+
+                    transaction.Commit();
+                    flag = 2;
+                }
+                catch (Exception ex)
+                {
+                    flag = 1;
+                    MessageBox.Show(ex.Message);
+                    transaction.Rollback();
+                }
+                finally { con.Close(); }
+            }
+            return flag;
+        }
+        public int SaveItem(object item, string selectQueryId, string updateQuery, string uploadQuery, Dictionary<string, object> nameIdPairs)
+        {
+            int flag = 0;
+            using (SqlConnection con = GetConnection())
+            {
+                con.Open();
+                SqlTransaction transaction = con.BeginTransaction();
+                try
+                {
+                    var itemType = item.GetType();
+                    var itemProperties = itemType.GetProperties();
+                    if (item is not null)
+                    {
+                        object result;
+                        // Check item with Id                        
+                        using (SqlCommand selectCommand = new SqlCommand(selectQueryId, con, transaction))
+                        {
+                            selectCommand.Parameters.Clear();
+                            foreach (var pair in nameIdPairs)
+                            {
+                                if (selectCommand.CommandText.Contains($"@{pair.Key}"))
+                                {
+                                    selectCommand.Parameters.AddWithValue($"@{pair.Key}", pair.Value);
+                                }
+                            }
+                            result = selectCommand.ExecuteScalar();
+                        }
+
+                        // If the same item is found than update properties
+                        if (result is not null)
+                        {
+                            using (SqlCommand updateCommand = new SqlCommand(updateQuery, con, transaction))
+                            {
+                                updateCommand.Parameters.Clear();
+                                foreach (var pair in nameIdPairs)
+                                {
+                                    if (updateCommand.CommandText.Contains($"@{pair.Key}") )
+                                    {
+                                        updateCommand.Parameters.AddWithValue($"@{pair.Key}", pair.Value);
+                                    }
+                                }
+                                foreach (var property in itemProperties)
+                                {
+                                    var value = property.GetValue(item);
+                                    if (value is not null && updateCommand.CommandText.Contains($"@{property.Name}") && !updateCommand.Parameters.Contains($"@{property.Name}"))
+                                    {
+                                        updateCommand.Parameters.AddWithValue($"@{property.Name}", value);
+                                    }
+                                    else if (value is null && updateCommand.CommandText.Contains($"@{property.Name}"))
+                                    {
+                                        var propertyType = property.PropertyType;
+                                        value = propertyType == typeof(string) ?
+                                            "" : propertyType == typeof(int) ?
+                                            0 : propertyType == typeof(decimal) ?
+                                            0 : propertyType == typeof(DateTime) ?
+                                            DateTime.Now : 0;
+                                        updateCommand.Parameters.AddWithValue($"@{property.Name}", value);
+                                    }
+                                }
+                                
+                                updateCommand.ExecuteNonQuery();
+                            }
+                        }
+                        // Otherwise insert new values to the table
+                        else
+                        {
+                            using (SqlCommand uploadCommand = new SqlCommand(uploadQuery, con, transaction))
+                            {
+                                uploadCommand.Parameters.Clear();
+                                foreach (var property in itemProperties)
+                                {
+                                    var value = property.GetValue(item);
+                                    if (value is not null && uploadCommand.CommandText.Contains($"@{property.Name}"))
+                                    {
+                                        uploadCommand.Parameters.AddWithValue($"@{property.Name}", value);
+                                    }
+                                    else if (value is null && uploadCommand.CommandText.Contains($"@{property.Name}"))
+                                    {
+                                        var propertyType = property.PropertyType;
+                                        value = propertyType == typeof(string) ?
+                                            "" : propertyType == typeof(int) ?
+                                            0 : propertyType == typeof(decimal) ?
+                                            0 : propertyType == typeof(DateTime) ?
+                                            DateTime.Now : 0;
+                                        uploadCommand.Parameters.AddWithValue($"@{property.Name}", value);
+                                    }
+                                }
+                                foreach (var pair in nameIdPairs) 
+                                {
+                                    if (!uploadCommand.Parameters.Contains($"@{pair.Key}")) 
+                                    {
+                                        uploadCommand.Parameters.AddWithValue($"@{pair.Key}", pair.Value);
+                                    }
+                                }
+                                uploadCommand.ExecuteNonQuery();
+                            }
+                        }
+                    }
+
+                    transaction.Commit();
+                    flag = 2;
+                }
+                catch (Exception ex)
+                {
+                    flag = 1;
+                    MessageBox.Show(ex.Message);
+                    transaction.Rollback();
+                }
+                finally { con.Close(); }
+            }
+            return flag;
+        }
+        public int SaveItem(object item, string selectQueryId, string updateQuery, string uploadQuery)
+        {
+            int flag = 0;
+            using (SqlConnection con = GetConnection())
+            {
+                con.Open();
+                SqlTransaction transaction = con.BeginTransaction();
+                try
+                {
+                    var itemType = item.GetType();
+                    var itemProperties = itemType.GetProperties();
+                    if (item is not null)
+                    {
+                        object result;
+                        // Check item with Id                        
+                        using (SqlCommand selectCommand = new SqlCommand(selectQueryId, con, transaction))
+                        {
+                            selectCommand.Parameters.Clear();
+                            foreach (var property in itemProperties)
+                            {
+                                var propertyName = property.Name;
+                                var propertyNameId = propertyName.Substring(propertyName.Length - 2); // Gets last 2 string letter
+                                
+                                if(propertyNameId == "Id" && selectCommand.CommandText.Contains($"@{ propertyName}"))
+                                {
+                                    var value = property.GetValue(item);
+                                    selectCommand.Parameters.AddWithValue($"@{propertyName}", value);
+                                }
+                            }
+                            result = selectCommand.ExecuteScalar();
+                        }
+
+                        // If the same item is found than update properties
+                        if (result is not null)
+                        {
+                            using (SqlCommand updateCommand = new SqlCommand(updateQuery, con, transaction))
+                            {
+                                updateCommand.Parameters.Clear();
+                                foreach (var property in itemProperties)
+                                {
+                                    var value = property.GetValue(item);
+                                    if (value is not null && updateCommand.CommandText.Contains($"@{property.Name}"))
+                                    {
+                                        updateCommand.Parameters.AddWithValue($"@{property.Name}", value);
+                                    }
+                                    else if (value is null && updateCommand.CommandText.Contains($"@{property.Name}"))
+                                    {
+                                        var propertyType = property.PropertyType;
+                                        value = propertyType == typeof(string) ?
+                                            "" : propertyType == typeof(int) ?
+                                            0 : propertyType == typeof(decimal) ?
+                                            0 : propertyType == typeof(DateTime) ?
+                                            DateTime.Now : 0;
+                                        updateCommand.Parameters.AddWithValue($"@{property.Name}", value);
+                                    }
+                                }
+                                updateCommand.ExecuteNonQuery();
+                            }
+                        }
+                        // Otherwise insert new values to the table
+                        else
+                        {
+                            using (SqlCommand uploadCommand = new SqlCommand(uploadQuery, con, transaction))
+                            {
+                                uploadCommand.Parameters.Clear();
+                                foreach (var property in itemProperties)
+                                {
+                                    var value = property.GetValue(item);
+                                    if (value is not null && uploadCommand.CommandText.Contains($"@{property.Name}"))
+                                    {
+                                        uploadCommand.Parameters.AddWithValue($"@{property.Name}", value);
+                                    }
+                                    else if (value is null && uploadCommand.CommandText.Contains($"@{property.Name}"))
+                                    {
+                                        var propertyType = property.PropertyType;
+                                        value = propertyType == typeof(string) ?
+                                            "" : propertyType == typeof(int) ?
+                                            0 : propertyType == typeof(decimal) ?
+                                            0 : propertyType == typeof(DateTime) ?
+                                            DateTime.Now : 0;
+                                        uploadCommand.Parameters.AddWithValue($"@{property.Name}", value);
+                                    }
+                                }
+                                uploadCommand.ExecuteNonQuery();
+                            }
+                        }
+                    }
+
+                    transaction.Commit();
+                    flag = 2;
+                }
+                catch (Exception ex)
+                {
+                    flag = 1;
+                    MessageBox.Show(ex.Message);
+                    transaction.Rollback();
+                }
+                finally { con.Close(); }
+            }
+            return flag;
+        }
+        public T GetItem<T>(string selectQuery) where T : class 
+        {
+            var item = Activator.CreateInstance<T>();
+            var itemType = item.GetType();
+            var itemProperties = itemType.GetProperties();
+            using (var con = GetConnection())
+            {
+                try
+                {
+                    con.Open();
+                    using (var cmd = new SqlCommand(selectQuery, con))
+                    {
+                        foreach (var property in itemProperties)
+                        {
+                            var propertyName = property.Name;
+                            var propertyNameId = propertyName.Substring(propertyName.Length - 2); // Gets last 2 string letter
+                            var propertyNameItem = propertyName.Substring(0, propertyName.Length - 2); // Gets the first string letters before Id
+                            if (propertyNameId == "Id" && propertyNameItem == itemType.Name)
+                            {
+                                using (var reader = cmd.ExecuteReader())
+                                {
+                                    if (reader.Read())
+                                    {
+                                        var checkValue = property.GetValue(item);
+                                        if (checkValue != null)
+                                        {
+                                            var value = Convert.ChangeType(reader[property.Name], property.PropertyType);
+                                            property.SetValue(item, value);
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                        }
+
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+                finally { con.Close(); }
+            }
+            return item;
+        }
+        public T GetItem<T>(object Id, string selectQuery) where T : class
+        {
+            var item = Activator.CreateInstance<T>();
+            var itemType = item.GetType();
+            var itemProperties = itemType.GetProperties();
+            if (Id is not null)
+            {
+                using (var con = GetConnection())
+                {
+                    try
+                    {
+                        con.Open();
+                        using (var cmd = new SqlCommand(selectQuery, con))
+                        {
+                            cmd.Parameters.Clear();
+                            foreach (var property in itemProperties)
+                            {
+                                var propertyName = property.Name;
+                                var propertyNameId = propertyName.Substring(propertyName.Length - 2); // Gets last 2 string letter
+
+                                if (propertyNameId == "Id" && cmd.CommandText.Contains($"@{propertyName}"))
+                                {
+                                    cmd.Parameters.AddWithValue($"@{propertyName}", Id);
+                                    break;
+                                }
+                                else if (cmd.CommandText.Contains("@Id")) 
+                                {
+                                    cmd.Parameters.AddWithValue("@Id", Id);
+                                    break;
+                                }
+                            }
+                            using (var reader = cmd.ExecuteReader())
+                            {
+                                if (reader.Read())
+                                {
+                                    foreach (var property in itemProperties)
+                                    {
+                                        bool hasReaderProperty = CheckReaderProperty(reader, property.Name);
+                                        if (hasReaderProperty)
+                                        {
+                                            var value = Convert.ChangeType(reader[property.Name], property.PropertyType);
+                                            property.SetValue(item, value);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (SqlException ex)
+                    {
+                        MessageBox.Show(ex.ToString());
+                    }
+                    finally { con.Close(); }
+                }
+                return item;
+            }
+            else
+            {
+                return item;
+            }
+        }
+        public T GetItem<T>(string selectQuery, Dictionary<string, object> nameIdPairs) where T : class
+        {
+            var item = Activator.CreateInstance<T>();
+            var itemType = item.GetType();
+            var itemProperties = itemType.GetProperties();
+            using (var con = GetConnection())
+            {
+                try
+                {
+                    con.Open();
+                    using (var cmd = new SqlCommand(selectQuery, con))
+                    {
+                        foreach (var pair in nameIdPairs)
+                        {
+                            if (cmd.CommandText.Contains($"@{pair.Key}"))
+                            {
+                                cmd.Parameters.AddWithValue($"@{pair.Key}", pair.Value);
+                            }
+                        }
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                foreach (var property in itemProperties)
+                                {
+                                    bool hasReaderProperty = CheckReaderProperty(reader, property.Name);
+                                    if (hasReaderProperty)
+                                    {
+                                        var value = Convert.ChangeType(reader[property.Name], property.PropertyType);
+                                        property.SetValue(item, value);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+                finally { con.Close(); }
+            }
+            return item;
+        }
         private static bool CheckReaderProperty (SqlDataReader reader, string property) 
         {
             bool flag;

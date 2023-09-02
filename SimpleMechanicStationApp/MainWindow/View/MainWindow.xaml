@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimpleMechanicStationApp.MainWindow.View"
         mc:Ignorable="d"
-        Title="MainForm" 
+        Title="MainWindowView" 
         Height="600" 
         Width="800" 
         Style="{DynamicResource RoundCornerView}"
@@ -16,14 +16,32 @@
         WindowStartupLocation="CenterScreen">
 
     <Border x:Name="MainFormBorder">
-        <Grid x:Name="MainFormGrid">
+        <Grid x:Name="MainFormGrid" Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock x:Name="User" 
+                       Margin="10,0,00,0"
+                       VerticalAlignment="Top"
+                       HorizontalAlignment="Left"
+                       Width="Auto"
+                       Background="Transparent"
+                       Text="{Binding CurrentUserName}"
+                       Style="{DynamicResource CustomTextBlockStyle}"
+                       FontWeight="Bold"
+                       TextAlignment="Center"
+                       Grid.Row="0"/>
             <ScrollViewer x:Name="ScrollViewerOrders"
                           Width="350" 
-                          Height="500" 
-                          Margin="0,40,40,0" 
+                          Height="510" 
+                          Margin="0,10,0,10" 
                           HorizontalAlignment="Right" 
                           VerticalAlignment="Top"
-                          IsTabStop="False">
+                          IsTabStop="False"
+                          Grid.Row="1"
+                          VerticalScrollBarVisibility="Hidden">
                 <ItemsControl ItemsSource="{Binding Orders}"
                               IsTabStop="False">
                     <ItemsControl.ItemTemplate>
@@ -47,16 +65,15 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </ScrollViewer>
-
-            <TextBlock x:Name="User" 
-                       Margin="10,0,700,0"
-                       VerticalAlignment="Top"
-                       Width="Auto"
-                       Background="Transparent"
-                       Text="{Binding CurrentUserName}"
-                       Style="{DynamicResource CustomTextBlockStyle}"
-                       FontWeight="Bold"
-                       TextAlignment="Center"/>
+            <Button Grid.Row="2" 
+                    Height="30" 
+                    Width="Auto"
+                    Padding="10,0,10,0"
+                    Content="New order"
+                    Style="{DynamicResource RoundButtonCornerStyle_1}" 
+                    HorizontalAlignment="Right"
+                    Command="{Binding AddItem}"
+                    Margin="0,0,0,0"/>
         </Grid>
     </Border>
 </Window>

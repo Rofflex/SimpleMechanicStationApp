@@ -9,21 +9,18 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.DBConnection
     /// Returns established connection
     /// Connection string assembled using credentials from ConFile which is located on Documents\\Mechanic Station\\Client
     /// </summary>
-    public abstract class Connection
+    public class Connection
     {
         private readonly string connectionString;
-
-        public Connection()
+        protected Connection()
         {
             connectionString = GetConnectionString();
         }
-
-        protected SqlConnection GetConnection()
+        public SqlConnection GetConnection()
         {
             return new SqlConnection(connectionString);
         }
-
-        private string GetConnectionString()
+        protected string GetConnectionString()
         {
             string ConString;
             string UserName = getUserName();
@@ -40,11 +37,10 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.DBConnection
             }
             return ConString;
         }
-
         private string getUserName()
         {
             return Environment.UserName;
         }
+
     }
 }
-

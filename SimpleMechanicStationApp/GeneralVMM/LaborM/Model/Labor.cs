@@ -1,82 +1,109 @@
-﻿using SimpleMechanicStationApp.GeneralMethods.ViewModelBaseCommand;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace SimpleMechanicStationApp.GeneralVMM.LaborM.Model
 {
-    public class Labor:ViewModelBase
+    public class Labor:BaseModel<int>
     {
-        private int _laborId;
-        public int LaborId
-        {
-            get { return _laborId; }
-            set
-            {
-                if (_laborId != value)
-                {
-                    _laborId = value;
-                    OnPropertyChanged(nameof(LaborId));
-                }
-            }
-        }
-
-        private string _laborName;
-        public string LaborName
-        {
-            get { return _laborName; }
-            set
-            {
-                if (_laborName != value)
-                {
-                    _laborName = value;
-                    OnPropertyChanged(nameof(LaborName));
-                }
-            }
-        }
-
+        // Fields
+        private string _laborDescription;
+        private string _laborLink;
         private decimal _laborHours;
+        private int _mechanicId;
+        private string _mechanicName;
+        private decimal _laborSoldPrice;
+        private decimal _laborSoldHours;
+        private string _partId;
+
+        // Properties
+        public int LaborId 
+        {
+            get => Id;
+            set 
+            {
+                Id = value;
+                OnPropertyChanged(nameof(LaborId));
+            }
+        }
+        public string LaborName 
+        {
+            get => Name;
+            set 
+            {
+                Name = value;
+                OnPropertyChanged(nameof(LaborName));
+            }
+        }
+        public string LaborDescription 
+        {
+            get => _laborDescription;
+            set 
+            {
+                _laborDescription = value;
+                OnPropertyChanged(nameof(LaborDescription));
+            }
+        }
+        public string LaborLink
+        {
+            get => _laborLink;
+            set
+            {
+                _laborLink = value;
+                OnPropertyChanged(nameof(LaborLink));
+            }
+        }
         public decimal LaborHours
         {
-            get { return _laborHours; }
+            get => _laborHours;
             set
             {
-                if (_laborHours != value)
-                {
-                    _laborHours = value;
-                    OnPropertyChanged(nameof(LaborHours));
-                    OnPropertyChanged(nameof(LaborSoldPrice));
-                }
+                _laborHours = value;
+                OnPropertyChanged(nameof(LaborHours));
             }
         }
-
-        private string _mechanicName;
-        public string MechanicName
+        public int MechanicId 
         {
-            get { return _mechanicName; }
-            set
+            get => _mechanicId;
+            set 
             {
-                if (_mechanicName != value)
-                {
-                    _mechanicName = value;
-                    OnPropertyChanged(nameof(MechanicName));
-                }
+                _mechanicId = value;
+                OnPropertyChanged(nameof(MechanicId));
             }
         }
-
-        private decimal _laborSoldPrice;
+        public string MechanicName 
+        {
+            get => _mechanicName;
+            set 
+            {
+                _mechanicName = value;
+                OnPropertyChanged(nameof(MechanicName));
+            }
+        }
         public decimal LaborSoldPrice
         {
-            get { return Math.Round(LaborHours * 150); }
+            get => Math.Round(LaborSoldHours * 150, 2);
             set
             {
-                if (_laborSoldPrice != value)
-                {
-                    _laborSoldPrice = value;
-                    OnPropertyChanged(nameof(LaborSoldPrice));
-                }
+                _laborSoldPrice = value;
+                OnPropertyChanged(nameof(LaborSoldPrice));
+            }
+        }
+        public decimal LaborSoldHours 
+        {
+            get => _laborSoldHours;
+            set
+            {
+                _laborSoldHours = value;
+                OnPropertyChanged(nameof(LaborSoldHours));
+                OnPropertyChanged(nameof(LaborSoldPrice));
+            }
+        }
+        public string PartId 
+        {
+            get => _partId;
+            set 
+            {
+                _partId = value;
+                OnPropertyChanged(nameof(PartId));
             }
         }
     }

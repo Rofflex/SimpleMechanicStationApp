@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:controls="clr-namespace:SimpleMechanicStationApp.TemplatesXAML.Controls" xmlns:local="clr-namespace:SimpleMechanicStationApp.TemplatesXAML.WindowTemplate"
+        xmlns:controls="clr-namespace:SimpleMechanicStationApp.TemplatesXAML.Controls"
         mc:Ignorable="d"
         Title="LoginWindow" 
         Height="280" 
@@ -21,13 +21,14 @@
 
                 <Button x:Name="ButtonLogin" 
                         Style="{DynamicResource RoundButtonCorner}" 
-                        Command="{Binding LoginCommand}" 
+                        Command="{Binding Login}" 
                         Content="Log in" 
                         Height="auto" 
                         Width="auto"/>
 
                 <Button x:Name="ButtonForgotPassword"               
                         Style="{DynamicResource RoundButtonCorner}" 
+                        Command="{Binding RecoverPassword}"
                         Content="Forgot password" 
                         Height="auto" 
                         Width="auto" 
