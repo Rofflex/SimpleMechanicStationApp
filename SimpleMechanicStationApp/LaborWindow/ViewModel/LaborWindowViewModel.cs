@@ -1,10 +1,9 @@
 ﻿using SimpleMechanicStationApp.GeneralMethods.ViewModelBaseCommand;
 using System.Windows.Input;
-using System.Windows;
 using SimpleMechanicStationApp.GeneralVMM.LaborM.Model;
 using SimpleMechanicStationApp.GeneralMethods.WindowViewModel;
-using SimpleMechanicStationApp.GeneralVMM.ManufactureM.Model;
 using System.Collections.Generic;
+using SimpleMechanicStationApp.GeneralVMM.PartM.Model;
 
 namespace SimpleMechanicStationApp.LaborWindow.ViewModel
 {
@@ -91,8 +90,12 @@ namespace SimpleMechanicStationApp.LaborWindow.ViewModel
         public ICommand AddPart { get; set; }
 
         // Constructor
-        public LaborWindowViewModel(int laborId, string partId):
-            base(selectQueryId, updateQuery, uploadQuery, getQuery, new Dictionary<string, object> { { "LaborId", laborId }, { "PartId", partId } })
+        /// <summary>
+        /// Invoke constructor with getting information about labor and using multiply parameters for query from dictionary
+        /// </summary>
+        /// <param name="labor">Type Labor</param>
+        /// <param name="nameIdPairs">Dictionary with multipy parameters for Query</param>
+        public LaborWindowViewModel(Labor labor, Dictionary<string, object> nameIdPairs):base(selectQueryId, updateQuery, uploadQuery, getQuery, nameIdPairs)
         {
             AddPart = new ViewModelCommand<object>(ExecuteAddPart);
         }
@@ -100,9 +103,17 @@ namespace SimpleMechanicStationApp.LaborWindow.ViewModel
         {
             AddPart = new ViewModelCommand<object>(ExecuteAddPart);
         }
+        /// <summary>
+        /// Invoke constructor with using multiply parameters for query from dictionary
+        /// </summary>
+        /// <param name="nameIdPairs">Dictionary with multipy parameters for Query</param>
+        public LaborWindowViewModel(Dictionary<string, object> nameIdPairs):base(selectQueryId, updateQuery, uploadQuery, getQueryId, nameIdPairs)
+        {
+            AddPart = new ViewModelCommand<object>(ExecuteAddPart);
+        }
 
         // Methods
-        private void ExecuteAddPart(object obj)
+        private void ExecuteAddPart(object obj)// Doesn't work because didn't finish. The main idea in adding Car Parts which is linked to the labor
         {
 
         }

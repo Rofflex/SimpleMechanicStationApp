@@ -10,8 +10,10 @@ namespace SimpleMechanicStationApp.GeneralVMM.OrderButtonVMM.ViewModel
 {
     public class OrderButtonViewModel:ViewModelBase
     {
+        // Fields
         private OrderButton _orderButton;
 
+        //Properties
         public bool IsEnabled
         {
             get => _orderButton.IsEnabled;
@@ -21,7 +23,6 @@ namespace SimpleMechanicStationApp.GeneralVMM.OrderButtonVMM.ViewModel
                 OnPropertyChanged(nameof(IsEnabled));
             }
         }
-
         public string Summary
         {
             get => _orderButton.Summary;
@@ -31,7 +32,6 @@ namespace SimpleMechanicStationApp.GeneralVMM.OrderButtonVMM.ViewModel
                 OnPropertyChanged(nameof(Summary));
             }
         }
-
         public int OrderId
         {
             get => _orderButton.OrderId;
@@ -42,6 +42,7 @@ namespace SimpleMechanicStationApp.GeneralVMM.OrderButtonVMM.ViewModel
             }
         }
 
+        // Constructor
         public OrderButtonViewModel()
         {
             _orderButton = new OrderButton();

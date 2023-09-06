@@ -19,9 +19,9 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands
         public static DBCommands Instance => instance;
 
         // Methods
-        public int AuthUser(string UserName, string Password) //return 0 - no connection db; 1 - wrong log pass; 2 - connection established
+        public int AuthUser(string userName, string password)
         {
-            int ValidConnection;
+            int validConnection;
             using (var con = GetConnection())
             {
                 try
@@ -31,55 +31,18 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands
                         con.Open();
                         cmd.Connection = con;
                         cmd.CommandText = "select Log, Pass from LogPass where Log = @Login and Pass = @Password";
-                        cmd.Parameters.Add("Login", System.Data.SqlDbType.VarChar).Value = UserName;
-                        cmd.Parameters.Add("Password", System.Data.SqlDbType.VarChar).Value = Password;
-                        ValidConnection = cmd.ExecuteScalar() == null ? 1 : 2;
+                        cmd.Parameters.AddWithValue("Login", userName);
+                        cmd.Parameters.AddWithValue("Password", password);
+                        validConnection = cmd.ExecuteScalar() == null ? 1 : 2;
                     }
                 }
                 catch (SqlException)
                 {
-                    ValidConnection = 0;
+                    validConnection = 0;
                 }
                 finally { con.Close(); }
             }
-            return ValidConnection;
-        }
-        public List<OrderButtonViewModel> DownloadOrders()
-        {
-            var orders = new List<OrderButtonViewModel>();
-            using (var con = GetConnection())
-            {
-                try
-                {
-                    using (var cmd = new SqlCommand())
-                    {
-                        con.Open();
-                        cmd.Connection = con;
-                        cmd.CommandText = "select OrderId, (COALESCE(CarMake, '') +' '+ COALESCE(CarModel, '') +' '+ COALESCE(VIN, '') +' '" +
-                            "+ COALESCE(Convert(varchar, CarYear), '') +' '+ COALESCE(CarPlate, '')) as \"Summary\" " +
-                            "from dbo.[Order] inner join dbo.[CarInfo] on dbo.[Order].CarId = dbo.[CarInfo].CarId";
-                        using (var reader = cmd.ExecuteReader())
-                        {
-                            //If needed can be orginized as automated looker for index of column, Example: var IndexOrderId = reader.GetOrdinal("OrderId");
-
-                            while (reader.Read())
-                            {
-                                orders.Add(new OrderButtonViewModel
-                                {
-                                    OrderId = reader.GetInt32(0),
-                                    Summary = reader.GetString(1)
-                                });
-                            }
-                        }
-                    }
-                }
-                catch (SqlException ex)
-                {
-                    MessageBox.Show(ex.ToString());
-                }
-                finally { con.Close(); }
-            }
-            return orders;
+            return validConnection;
         }
         public void DownloadUserAccount(CurrentUser currentUserModel)
         {
@@ -122,15 +85,7 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands
                     con.Open();
                     using (SqlCommand cmd = new SqlCommand(commandText, con))
                     {
-
-                        if (id?.GetType() == typeof(int))
-                        {
-                            cmd.Parameters.Add("id", System.Data.SqlDbType.Int).Value = id;
-                        }
-                        else if (id?.GetType() == typeof(string))
-                        {
-                            cmd.Parameters.Add("id", System.Data.SqlDbType.VarChar).Value = id;
-                        }
+                        cmd.Parameters.AddWithValue("id", id);
 
                         using (SqlDataReader reader = cmd.ExecuteReader())
                         {
@@ -273,7 +228,7 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands
                             selectCommand.Parameters.Clear();
                             foreach (var pair in nameIdPairs)
                             {
-                                if (selectCommand.CommandText.Contains($"@{pair.Key}"))
+                                if (!selectCommand.Parameters.Contains($"@{pair.Key}") && selectCommand.CommandText.Contains($"@{pair.Key}"))
                                 {
                                     selectCommand.Parameters.AddWithValue($"@{pair.Key}", pair.Value);
                                 }
@@ -360,6 +315,13 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands
                                         uploadCommand.Parameters.AddWithValue($"@{property.Name}", value);
                                     }
                                 }
+                                foreach (var pair in nameIdPairs)
+                                {
+                                    if (!uploadCommand.Parameters.Contains($"@{pair.Key}") && uploadCommand.CommandText.Contains($"@{pair.Key}"))
+                                    {
+                                        uploadCommand.Parameters.AddWithValue($"@{pair.Key}", pair.Value);
+                                    }
+                                }
                                 uploadCommand.ExecuteNonQuery();
                             }
                         }
@@ -399,9 +361,8 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands
                             foreach (var property in itemProperties)
                             {
                                 var propertyName = property.Name;
-                                var propertyNameId = propertyName.Substring(propertyName.Length - 2); // Gets last 2 string letter
 
-                                if (propertyNameId == "Id" && selectCommand.CommandText.Contains($"@{propertyName}"))
+                                if (selectCommand.CommandText.Contains($"@{propertyName}"))
                                 {
                                     var value = property.GetValue(item);
                                     selectCommand.Parameters.AddWithValue($"@{propertyName}", value);
@@ -528,9 +489,18 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands
                             selectCommand.Parameters.Clear();
                             foreach (var pair in nameIdPairs)
                             {
-                                if (selectCommand.CommandText.Contains($"@{pair.Key}"))
+                                if (pair.Value is not null && selectCommand.CommandText.Contains($"@{pair.Key}"))
                                 {
                                     selectCommand.Parameters.AddWithValue($"@{pair.Key}", pair.Value);
+                                }
+                            }
+                            foreach (var property in itemProperties)
+                            {
+                                var propertyName = property.Name;
+                                if (!selectCommand.Parameters.Contains($"@{propertyName}") && selectCommand.CommandText.Contains($"@{propertyName}"))
+                                {
+                                    var value = property.GetValue(item);
+                                    selectCommand.Parameters.AddWithValue($"@{propertyName}", value);
                                 }
                             }
                             result = selectCommand.ExecuteScalar();
@@ -544,7 +514,7 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands
                                 updateCommand.Parameters.Clear();
                                 foreach (var pair in nameIdPairs)
                                 {
-                                    if (updateCommand.CommandText.Contains($"@{pair.Key}") )
+                                    if (pair.Value is not null && updateCommand.CommandText.Contains($"@{pair.Key}") )
                                     {
                                         updateCommand.Parameters.AddWithValue($"@{pair.Key}", pair.Value);
                                     }
@@ -556,7 +526,7 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands
                                     {
                                         updateCommand.Parameters.AddWithValue($"@{property.Name}", value);
                                     }
-                                    else if (value is null && updateCommand.CommandText.Contains($"@{property.Name}"))
+                                    else if (value is null && updateCommand.CommandText.Contains($"@{property.Name}") && !updateCommand.Parameters.Contains($"@{property.Name}"))
                                     {
                                         var propertyType = property.PropertyType;
                                         value = propertyType == typeof(string) ?
@@ -577,14 +547,21 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands
                             using (SqlCommand uploadCommand = new SqlCommand(uploadQuery, con, transaction))
                             {
                                 uploadCommand.Parameters.Clear();
+                                foreach (var pair in nameIdPairs)
+                                {
+                                    if (pair.Value is not null && uploadCommand.CommandText.Contains($"@{pair.Key}"))
+                                    {
+                                        uploadCommand.Parameters.AddWithValue($"@{pair.Key}", pair.Value);
+                                    }
+                                }
                                 foreach (var property in itemProperties)
                                 {
                                     var value = property.GetValue(item);
-                                    if (value is not null && uploadCommand.CommandText.Contains($"@{property.Name}"))
+                                    if (value is not null && !uploadCommand.Parameters.Contains($"@{property.Name}") && uploadCommand.CommandText.Contains($"@{property.Name}"))
                                     {
                                         uploadCommand.Parameters.AddWithValue($"@{property.Name}", value);
                                     }
-                                    else if (value is null && uploadCommand.CommandText.Contains($"@{property.Name}"))
+                                    else if (value is null && !uploadCommand.Parameters.Contains($"@{property.Name}") && uploadCommand.CommandText.Contains($"@{property.Name}"))
                                     {
                                         var propertyType = property.PropertyType;
                                         value = propertyType == typeof(string) ?
@@ -593,13 +570,6 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands
                                             0 : propertyType == typeof(DateTime) ?
                                             DateTime.Now : 0;
                                         uploadCommand.Parameters.AddWithValue($"@{property.Name}", value);
-                                    }
-                                }
-                                foreach (var pair in nameIdPairs) 
-                                {
-                                    if (!uploadCommand.Parameters.Contains($"@{pair.Key}")) 
-                                    {
-                                        uploadCommand.Parameters.AddWithValue($"@{pair.Key}", pair.Value);
                                     }
                                 }
                                 uploadCommand.ExecuteNonQuery();
@@ -871,7 +841,7 @@ namespace SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands
             }
             return item;
         }
-        private static bool CheckReaderProperty (SqlDataReader reader, string property) 
+        private bool CheckReaderProperty (SqlDataReader reader, string property) 
         {
             bool flag;
             try 

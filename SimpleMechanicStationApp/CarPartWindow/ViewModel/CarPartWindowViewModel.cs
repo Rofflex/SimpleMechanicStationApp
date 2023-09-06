@@ -35,7 +35,10 @@ namespace SimpleMechanicStationApp.CarPartWindow.ViewModel
             "insert into CarPart_CarInfo(PartId, ManufactureId, CarId) " +
             "values(@PartId, @ManufactureId, @CarId)";
         private const string uploadQuerySecond = "insert into CarPart(PartId, PartName, PartDescription, PartLink, PartRetailPrice, PartTradePrice, ManufactureId) " +
-            "values(@PartId, @PartName, @PartDescription, @PartLink, @PartRetailPrice, @PartTradePrice, @ManufactureId); ";
+            "values(@PartId, @PartName, @PartDescription, @PartLink, @PartRetailPrice, @PartTradePrice, @ManufactureId); " +
+            "if exists(select CarId from CarInfo where CarId = @CarId) begin " +
+            "insert into CarPart_CarInfo(PartId, ManufactureId, CarId) " +
+            "values(@PartId, @ManufactureId, @CarId) end";
         private const string getQuery = "select PartId, PartName, PartDescription, PartLink, " +
             "PartRetailPrice, PartTradePrice, CarPart.ManufactureId, ManufactureName " +
             "from CarPart " +
@@ -118,10 +121,16 @@ namespace SimpleMechanicStationApp.CarPartWindow.ViewModel
                 OnPropertyChanged(nameof(ManufactureName));
             }
         }
+
         public ICommand ChooseCars { get; set; }
         public ICommand ChooseManufacture { get; set; }
 
         // Constructor
+        /// <summary>
+        /// Invoke constructor with filling out dictionary and assigning save command
+        /// </summary>
+        /// <param name="part">Type Part</param>
+        /// <param name="nameIdPair">Dictionary with multipy parameters for Query</param>
         public CarPartWindowViewModel(Part part, Dictionary<string, object> nameIdPair):base(part)  
         {
             _nameIdPairs = FillDictionary(nameIdPair);
@@ -129,13 +138,29 @@ namespace SimpleMechanicStationApp.CarPartWindow.ViewModel
             ChooseCars = new ViewModelCommand<object>(ExecuteChooseCars);
             ChooseManufacture = new ViewModelCommand<object>(ExecuteChooseManufacture);
         }
-        public CarPartWindowViewModel():base(selectQuery, updateQuery, uploadQuerySecond)
+        /// <summary>
+        /// Base constructor
+        /// </summary>
+        public CarPartWindowViewModel() :base()
+        {
+            ChooseCars = new ViewModelCommand<object>(ExecuteChooseCars);
+            ChooseManufacture = new ViewModelCommand<object>(ExecuteChooseManufacture);
+        }
+        /// <summary>
+        /// Invoke constructor with filling out dictionary
+        /// </summary>
+        /// <param name="nameIdPair">Dictionary with multipy parameters for Query</param>
+        public CarPartWindowViewModel(Dictionary<string, object> nameIdPair) : base(selectQuery, updateQuery, uploadQuerySecond, nameIdPair)
         {
             ChooseCars = new ViewModelCommand<object>(ExecuteChooseCars);
             ChooseManufacture = new ViewModelCommand<object>(ExecuteChooseManufacture);
         }
 
         // Methods
+        /// <summary>
+        /// Check PartId and ManufactureName if it is null or empty then messagebox with require to fill out them
+        /// </summary>
+        /// <param name="obj"></param>
         private void ExecuteSave(object obj)
         {
             int flag = 0;
@@ -168,17 +193,28 @@ namespace SimpleMechanicStationApp.CarPartWindow.ViewModel
                 IsReadOnly = true;
             }
         }
+        /// <summary>
+        /// Didn't finish it. The main idea is choose cars for CarPart.
+        /// </summary>
+        /// <param name="obj"></param>
         private void ExecuteChooseCars(object obj) 
         {
             
         }
+        /// <summary>
+        /// 1) Creates DialogWindowVM with a type of item, type of item window viewmodel, item window view, type of item Id
+        /// 2) Creates DialogWindowView
+        /// 3) Assign dialogWindowVM to dialogWindow DataContext
+        /// 4) Opens dialogWindow with a ShowDialog
+        /// 5) If double clicked on item in DataGrid in DialogWindow - result = true and then we take selected item from DialogWindow
+        /// 6) if this Item has already added in Items list then MessageBox otherwise Add to items list
+        /// </summary>
+        /// <param name="obj"></param>
         private void ExecuteChooseManufacture(object obj)
         {
             if (IsEditing)
             {
-                DialogWindowVM<Manufacture, ManufactureWindowViewModel, ManufactureWindowView, int> dialogWindowVM =
-                    new DialogWindowVM<Manufacture, ManufactureWindowViewModel, ManufactureWindowView, int>(queryForManufactures);
-
+                var dialogWindowVM = new DialogWindowVM<Manufacture, ManufactureWindowViewModel, ManufactureWindowView, int>(queryForManufactures);
                 DialogWindowView dialogWindow = new DialogWindowView();
                 dialogWindow.DataContext = dialogWindowVM;
 
@@ -202,6 +238,11 @@ namespace SimpleMechanicStationApp.CarPartWindow.ViewModel
                 }
             }
         }
+        /// <summary>
+        /// Fills out dictionary with parameters OldPartId and OldManufatureId. These parameters are needed for insert query to update items
+        /// </summary>
+        /// <param name="nameIdPair">Dictionary to fill out</param>
+        /// <returns>returns filled out dictionary</returns>
         private Dictionary<string, object> FillDictionary(Dictionary<string,object>nameIdPair) 
         {
             if (nameIdPair.ContainsKey("OldPartId")) 
@@ -210,7 +251,7 @@ namespace SimpleMechanicStationApp.CarPartWindow.ViewModel
             }
             else 
             { 
-                nameIdPair.Add("PartId", PartId); 
+                nameIdPair.Add("OldPartId", PartId); 
             }
 
             if (nameIdPair.ContainsKey("OldManufactureId"))
@@ -219,7 +260,7 @@ namespace SimpleMechanicStationApp.CarPartWindow.ViewModel
             }
             else 
             { 
-                nameIdPair.Add("ManufactureId", Part.ManufactureId); 
+                nameIdPair.Add("OldManufactureId", Part.ManufactureId); 
             }
             return nameIdPair;
         }

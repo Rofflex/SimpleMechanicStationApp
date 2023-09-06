@@ -8,13 +8,9 @@ namespace SimpleMechanicStationApp.DialogWindow.BaseViewModel
     public abstract class BaseDialogWindowVM<T> : ViewModelBase
     {
         // Fields
-        public readonly DBCommands _dbCommands = DBCommands.Instance;
+        public readonly IDBCommands _dbCommands = DBCommands.Instance;
         private ObservableCollection<T> _items;
         private T _selectedItem;
-
-        public ICommand ChangeItem { get; set; }
-        public ICommand AddItem { get; set; }
-        public ICommand DeleteItem { get; set; }
 
         // Properties
         public ObservableCollection<T> Items
@@ -35,6 +31,10 @@ namespace SimpleMechanicStationApp.DialogWindow.BaseViewModel
                 OnPropertyChanged(nameof(SelectedItem));
             }
         }
+
+        public ICommand ChangeItem { get; set; }
+        public ICommand AddItem { get; set; }
+        public ICommand DeleteItem { get; set; }
 
     }
 }

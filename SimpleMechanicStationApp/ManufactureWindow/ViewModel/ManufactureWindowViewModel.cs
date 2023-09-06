@@ -60,10 +60,17 @@ namespace SimpleMechanicStationApp.ManufactureWindow.ViewModel
         }
 
         // Constructor
+        /// <summary>
+        /// Invoke constructor with getting information about manufacture
+        /// </summary>
+        /// <param name="manufactureId">is chosen manufacture</param>
         public ManufactureWindowViewModel(int manufactureId):base(manufactureId, selectQueryId, updateQuery, uploadQuery, getQuery)
         {
 
         }
+        /// <summary>
+        /// Invoke constructor without any parameters to create new manufacture
+        /// </summary>
         public ManufactureWindowViewModel():base(selectQueryId, updateQuery, uploadQuery, getQueryId)
         {
 

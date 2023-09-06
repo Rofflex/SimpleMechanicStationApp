@@ -5,7 +5,7 @@ namespace SimpleMechanicStationApp.CustomerWindow.ViewModel
 {
     public class CustomerWindowViewModel:WindowVM<Customer, int>
     {
-        // Fields
+        // Const
         private const string selectQueryId = "select CustomerId from Customer where CustomerId = @CustomerId; ";
         private const string updateQuery = "update Customer " +
             "set CustomerId = @CustomerId, CustomerName = @CustomerName, CustomerPhone = @CustomerPhone, CustomerAddress = @CustomerAddress, CustomerInformation = @CustomerInformation " +
@@ -18,6 +18,8 @@ namespace SimpleMechanicStationApp.CustomerWindow.ViewModel
         private const string getQueryId = "select top(1) (CustomerId+1) As CustomerId  " +
             "from Customer " +
             "order by CustomerId desc";
+
+        // Fields
 
         // Properties
         public Customer Customer
@@ -76,10 +78,17 @@ namespace SimpleMechanicStationApp.CustomerWindow.ViewModel
         }
 
         // Constructor
+        /// <summary>
+        /// Invoke constructor with getting information about customer
+        /// </summary>
+        /// <param name="customerId">is chosen customer</param>
         public CustomerWindowViewModel(int customerId): base(customerId, selectQueryId, updateQuery, uploadQuery, getQuery)
         {
 
         }
+        /// <summary>
+        /// Invoke constructor without any parameters to create new customer
+        /// </summary>
         public CustomerWindowViewModel():base(selectQueryId, updateQuery, uploadQuery, getQueryId)
         {
 

@@ -152,10 +152,17 @@ namespace SimpleMechanicStationApp.CarWindow.ViewModel
         }
 
         // Constructor
-        public CarWindowViewModel(int carId) :base(carId, selectQueryId, selectQuery, updateQuery, uploadQuery, getQuery)
+        /// <summary>
+        /// Invoke constructor with getting information about car
+        /// </summary>
+        /// <param name="carId">is chosen car</param>
+        public CarWindowViewModel(int carId) : base(carId, selectQueryId, selectQuery, updateQuery, uploadQuery, getQuery)
         {
 
         }
+        /// <summary>
+        /// Invoke constructor without any parameters to create new car
+        /// </summary>
         public CarWindowViewModel() : base(selectQueryId, selectQuery, updateQuery, uploadQuery, getQueryId)
         {
 

@@ -57,12 +57,10 @@ namespace SimpleMechanicStationApp.OrderWindow.ViewModel
         private const string queryDialogWindowLabors = "select LaborId, LaborName, LaborHours, CarPart.PartId, PartName " +
            "from Labor " +
            "inner join CarPart on Labor.PartId=CarPart.PartId " +
-           "where Labor.PartId = @id or Labor.PartId between 1 and 10 " +
+           "where Labor.PartId = @id " +
            "group by LaborId, LaborName, CarPart.PartId, PartName, LaborHours";
-        private const string queryDialogWindowMechanic = "select * " +
-            "from Mechanic";
-        private const string queryDialogWindowCustomer = "select * " +
-            "from Customer";
+        private const string queryDialogWindowMechanic = "select * from Mechanic";
+        private const string queryDialogWindowCustomer = "select * from Customer";
         private const string queryDialogWindowCar = "select CarInfo.CarId, (CarMake +' '+ CarModel) as CarName, " +
             "CarMake, CarModel, CarYear, CarEngine, " +
             "CarBodyStyle, CarTrimLevel, CarWheelDrive, CarTransmission, " +
@@ -80,6 +78,8 @@ namespace SimpleMechanicStationApp.OrderWindow.ViewModel
         private Part _selectedItemParts;
         private ObservableCollection<Labor> _labors;
         private Labor _selectedItemLabors;
+
+        // Properties
         public Order Order
         {
             get => Item;
@@ -365,8 +365,6 @@ namespace SimpleMechanicStationApp.OrderWindow.ViewModel
         // Constructor
         public OrderWindowViewModel(int orderId):base(orderId, getQuery)
         {
-            IsReadOnly = true;
-            IsEditing = false;
             _parts = new ObservableCollection<Part>(_dbCommands.GetItemsForList<Part, int>(orderId, queryForParts));
             _labors = new ObservableCollection<Labor>(_dbCommands.GetItemsForList<Labor, int>(orderId, queryForLabors));
             UpdateAmount();
@@ -379,8 +377,6 @@ namespace SimpleMechanicStationApp.OrderWindow.ViewModel
         }
         public OrderWindowViewModel():base(getQueryId)
         {
-            IsReadOnly = false;
-            IsEditing = true;
             _parts = new ObservableCollection<Part>();
             _labors = new ObservableCollection<Labor>();
             UpdateAmount();
@@ -393,10 +389,13 @@ namespace SimpleMechanicStationApp.OrderWindow.ViewModel
         }
 
         // Methods
+        /// <summary>
+        /// Update amount of Parts and Labors
+        /// </summary>
         private void UpdateAmount()
         {
-            Order.PartsAmount = GetSummaryOfColumn<Part>(Parts, "Summary");
-            Order.LaborsAmount = GetSummaryOfColumn<Labor>(Labors, "LaborSoldPrice");
+            PartsAmount = GetSummaryOfColumn<Part>(Parts, "Summary");
+            LaborsAmount = GetSummaryOfColumn<Labor>(Labors, "LaborSoldPrice");
         }
         private void ExecuteSave(object param)
         {
@@ -416,40 +415,52 @@ namespace SimpleMechanicStationApp.OrderWindow.ViewModel
                     if (Result == MessageBoxResult.Yes)
                     {
                         RemoveSelection();
-                        SaveOrder(Order, Parts, Labors, OrderId);
+                        SaveOrder(Order, Parts, Labors);
                         IsEditing = false;
                         IsReadOnly = true;
                     }
                     else
                     {
+                        //Didn't finish it. It can work with method Clone which is base method of models. You can clone item and if worker doesn't want to save changes return Cloned items
                         IsEditing = true;
                         IsReadOnly = false;
                     }
                 }
             }
         }
+        /// <summary>
+        /// It updates parts and labors amounts plus tex amount and order amount
+        /// </summary>
+        /// <param name="param"></param>
         private void ExecuteDefinateColumnsChanged(object param)
         {
-            LaborsAmount = GetSummaryOfColumn<Labor>(Labors, "LaborSoldPrice");
-            PartsAmount = GetSummaryOfColumn<Part>(Parts, "Summary");
+            UpdateAmount();
             OnPropertyChanged(nameof(TaxAmount));
             OnPropertyChanged(nameof(OrderAmount));
         }
+        /// <summary>
+        /// 1) Creates DialogWindowVM with a type of item, type of item window viewmodel, item window view, type of item Id
+        /// 2) Creates DialogWindowView
+        /// 3) Assign dialogWindowVM to dialogWindow DataContext
+        /// 4) Opens dialogWindow with a ShowDialog
+        /// 5) If double clicked on item in DataGrid in DialogWindow - result = true and then we take selected item from DialogWindow
+        /// 6) if this Item has already added in Items list then MessageBox otherwise Add to items list
+        /// </summary>
+        /// <param name="param"></param>
         private void ExecuteAddParts(object param) 
         {
             if (IsEditing)
             {
-                
-                DialogWindowVM<Part, CarPartWindowViewModel, CarPartWindowView, string> dialogWindowVM =
-                    new DialogWindowVM<Part, CarPartWindowViewModel, CarPartWindowView, string>(queryDialogWindowCarParts, 
-                    new Dictionary<string, object> 
+                // dictionary to use in CarPartWindow where should be id, CarId, OldPartId and OldManufactureId.
+                // It is needed because CarPartWindowViewModel has constructor with query for carParts and these parameters
+                var tDictionary = new Dictionary<string, object>
                     {
                         { "id", Order.CarId},
                         { "CarId", Order.CarId},
                         { "OldPartId", null},
                         { "OldManufactureId", null}
-                    });
-
+                     }; 
+                var dialogWindowVM = new DialogWindowVM<Part, CarPartWindowViewModel, CarPartWindowView, string>(queryDialogWindowCarParts, tDictionary);
                 DialogWindowView dialogWindow = new DialogWindowView();
                 dialogWindow.DataContext = dialogWindowVM;
 
@@ -472,14 +483,26 @@ namespace SimpleMechanicStationApp.OrderWindow.ViewModel
                 }
             }
         }
+        /// <summary>
+        /// The same actions but with mechanic dialogWindow because If labor added we should choose mechanic
+        /// 1) Creates DialogWindowVM with a type of item, type of item window viewmodel, item window view, type of item Id
+        /// 2) Creates DialogWindowView
+        /// 3) Assign dialogWindowVM to dialogWindow DataContext
+        /// 4) Opens dialogWindow with a ShowDialog
+        /// 5) If double clicked on item in DataGrid in DialogWindow - result = true and then we take selected item from DialogWindow
+        /// 6) if this Item has already added in Items list then MessageBox otherwise Add to items list
+        /// </summary>
+        /// <param name="param"></param>
         private void ExecuteAddLabors(object param)
         {
             if (IsEditing && SelectedItemParts != null)
             {
-                DialogWindowVM<Labor, LaborWindowViewModel, LaborWindowView, int> dialogWindowVMLabor = 
-                    new DialogWindowVM<Labor, LaborWindowViewModel, LaborWindowView, int>(queryDialogWindowLabors, SelectedItemParts.PartId);
-                DialogWindowVM<Mechanic, MechanicWindowViewModel, MechanicWindowView, int> dialogWindowVMMechanic
-                    = new DialogWindowVM<Mechanic, MechanicWindowViewModel, MechanicWindowView, int>(queryDialogWindowMechanic);
+                var dialogWindowVMLabor = new DialogWindowVM<Labor, LaborWindowViewModel, LaborWindowView, int>(queryDialogWindowLabors, 
+                    new Dictionary<string, object> { 
+                        {"PartId", SelectedItemParts.PartId},
+                        {"id", SelectedItemParts.PartId},
+                        {"LaborId", null}});
+                var dialogWindowVMMechanic = new DialogWindowVM<Mechanic, MechanicWindowViewModel, MechanicWindowView, int>(queryDialogWindowMechanic);
 
                 DialogWindowView dialogWindow = new DialogWindowView();
                 dialogWindow.DataContext = dialogWindowVMLabor;
@@ -520,14 +543,21 @@ namespace SimpleMechanicStationApp.OrderWindow.ViewModel
                 MessageBox.Show("Choose car part to add labor");
             }
         }
-        private decimal GetSummaryOfColumn<T>(ObservableCollection<T> Collection, string ColumnName)
+        /// <summary>
+        /// Get summary of column from collection. For example it is used for Parts amount or Labors amount
+        /// </summary>
+        /// <typeparam name="T">Collection item type</typeparam>
+        /// <param name="Collection">Collection where should get summary</param>
+        /// <param name="ColumnName">Column name in DataGrid</param>
+        /// <returns>summary of rows in columnName</returns>
+        private decimal GetSummaryOfColumn<T>(ObservableCollection<T> collection, string columnName)
         {
             decimal summary = 0;
-            if (Collection.Count != 0)
+            if (collection.Count != 0)
             {
-                Type type = Collection[0].GetType();
-                PropertyInfo ?propertyInfo = type.GetProperty(ColumnName);
-                foreach (var item in Collection)
+                Type type = collection[0].GetType();
+                PropertyInfo ?propertyInfo = type.GetProperty(columnName);
+                foreach (var item in collection)
                 {
                     if (propertyInfo is not null)
                     {
@@ -538,18 +568,28 @@ namespace SimpleMechanicStationApp.OrderWindow.ViewModel
             }
             return summary;
         }
+        /// <summary>
+        /// Remove selection from parts and labors DataGrid
+        /// </summary>
         private void RemoveSelection() 
         {
             SelectedItemLabors = null;
             SelectedItemParts = null;
         }
+        /// <summary>
+        /// 1) Creates DialogWindowVM with a type of item, type of item window viewmodel, item window view, type of item Id
+        /// 2) Creates DialogWindowView
+        /// 3) Assign dialogWindowVM to dialogWindow DataContext
+        /// 4) Opens dialogWindow with a ShowDialog
+        /// 5) If double clicked on item in DataGrid in DialogWindow - result = true and then we take selected item from DialogWindow
+        /// 6) if this Item has already added in Items list then MessageBox otherwise Add to items list
+        /// </summary>
+        /// <param name="param"></param>
         private void ExecuteChooseCar(object param)
         {
             if (IsEditing)
             {
-                DialogWindowVM<Car, CarWindowViewModel, CarWindowView, int> dialogWindowVM =
-                    new DialogWindowVM<Car, CarWindowViewModel, CarWindowView, int>(queryDialogWindowCar);
-
+                var dialogWindowVM = new DialogWindowVM<Car, CarWindowViewModel, CarWindowView, int>(queryDialogWindowCar);
                 DialogWindowView dialogWindow = new DialogWindowView();
                 dialogWindow.DataContext = dialogWindowVM;
 
@@ -582,12 +622,20 @@ namespace SimpleMechanicStationApp.OrderWindow.ViewModel
                 }
             }
         }
+        /// <summary>
+        /// 1) Creates DialogWindowVM with a type of item, type of item window viewmodel, item window view, type of item Id
+        /// 2) Creates DialogWindowView
+        /// 3) Assign dialogWindowVM to dialogWindow DataContext
+        /// 4) Opens dialogWindow with a ShowDialog
+        /// 5) If double clicked on item in DataGrid in DialogWindow - result = true and then we take selected item from DialogWindow
+        /// 6) if this Item has already added in Items list then MessageBox otherwise Add to items list
+        /// </summary>
+        /// <param name="param"></param>
         private void ExecuteChooseCustomer(object param) 
         {
             if (IsEditing)
             {
-                DialogWindowVM<Customer, CustomerWindowViewModel, CustomerWindowView, int> dialogWindowVM =
-                    new DialogWindowVM<Customer, CustomerWindowViewModel, CustomerWindowView, int>(queryDialogWindowCustomer);
+                var dialogWindowVM = new DialogWindowVM<Customer, CustomerWindowViewModel, CustomerWindowView, int>(queryDialogWindowCustomer);
 
                 DialogWindowView dialogWindow = new DialogWindowView();
                 dialogWindow.DataContext = dialogWindowVM;
@@ -614,7 +662,19 @@ namespace SimpleMechanicStationApp.OrderWindow.ViewModel
                 }
             }
         }
-        private int SaveOrder(Order order, ObservableCollection<Part> parts, ObservableCollection<Labor> labors, int orderId)
+        /// <summary>
+        /// 1) Gets connection from _dbCommands.GetConnection()
+        /// 2) Select the same orderId from table order
+        /// 3) If any order with orderId found, then use CompareAndUpdateOrder procedure from DB otherwise insert new order to the DB
+        /// 4) if parts count is not 0 delete parts list from PartOrder and insert new list because it is faster than check and compare every item
+        /// 5) if labors count is not 0 delete labors list from laborOrder and insert new list because it is faster than check and compare every item
+        /// It works with transaction. If any errors then transaction will be Rollbacked 
+        /// </summary>
+        /// <param name="order">Type Order</param>
+        /// <param name="parts">Collection parts</param>
+        /// <param name="labors">Collection labors</param>
+        /// <returns>0 - no connection, 1 - DB exception, 2 - queries executed</returns>
+        private int SaveOrder(Order order, ObservableCollection<Part> parts, ObservableCollection<Labor> labors)
         {
             int flag = 0;
 
@@ -630,7 +690,7 @@ namespace SimpleMechanicStationApp.OrderWindow.ViewModel
                         string selectCommandText = "select OrderId from [Order] where OrderId = @OrderId";
                         using (SqlCommand selectCommand = new SqlCommand(selectCommandText, con, transaction))
                         {
-                            selectCommand.Parameters.Add("OrderId", System.Data.SqlDbType.Int).Value = orderId;
+                            selectCommand.Parameters.Add("OrderId", System.Data.SqlDbType.Int).Value = order.OrderId;
                             result = selectCommand.ExecuteScalar();
                         }
                         if (result is not null)
@@ -680,7 +740,6 @@ namespace SimpleMechanicStationApp.OrderWindow.ViewModel
                             }
                         }
                     }
-
                     if (parts.Count != 0)
                     {
                         string deleteCommandText = "delete from PartOrder where OrderId=@OrderId";
@@ -688,7 +747,7 @@ namespace SimpleMechanicStationApp.OrderWindow.ViewModel
                                             "values(@OrderId, @PartId, @ManufactureId, @Quantity, @PartSoldPrice)";
                         using (SqlCommand deleteRows = new SqlCommand(deleteCommandText, con, transaction))
                         {
-                            deleteRows.Parameters.Add("OrderId", System.Data.SqlDbType.Int).Value = orderId;
+                            deleteRows.Parameters.Add("OrderId", System.Data.SqlDbType.Int).Value = order.OrderId;
                             deleteRows.ExecuteNonQuery();
                         }
 
@@ -697,7 +756,7 @@ namespace SimpleMechanicStationApp.OrderWindow.ViewModel
                             foreach (Part part in parts)
                             {
                                 uploadCommand.Parameters.Clear();
-                                uploadCommand.Parameters.Add("OrderId", System.Data.SqlDbType.Int).Value = orderId;
+                                uploadCommand.Parameters.Add("OrderId", System.Data.SqlDbType.Int).Value = order.OrderId;
                                 uploadCommand.Parameters.Add("PartId", System.Data.SqlDbType.VarChar).Value = part.PartId;
                                 uploadCommand.Parameters.Add("ManufactureId", System.Data.SqlDbType.Int).Value = part.ManufactureId;
                                 uploadCommand.Parameters.Add("PartSoldPrice", System.Data.SqlDbType.Decimal).Value = part.PartSoldPrice;
@@ -706,7 +765,6 @@ namespace SimpleMechanicStationApp.OrderWindow.ViewModel
                             }
                         }
                     }
-
                     if (labors.Count != 0)
                     {
                         string deleteCommandText = "delete from LaborOrder where OrderId=@OrderId";
@@ -714,7 +772,7 @@ namespace SimpleMechanicStationApp.OrderWindow.ViewModel
                                             "values(@OrderId, @LaborId, @MechanicId, @LaborSoldPrice, @LaborSoldHours)";
                         using (SqlCommand deleteRows = new SqlCommand(deleteCommandText, con, transaction))
                         {
-                            deleteRows.Parameters.Add("OrderId", System.Data.SqlDbType.Int).Value = orderId;
+                            deleteRows.Parameters.Add("OrderId", System.Data.SqlDbType.Int).Value = order.OrderId;
                             deleteRows.ExecuteNonQuery();
                         }
 
@@ -723,7 +781,7 @@ namespace SimpleMechanicStationApp.OrderWindow.ViewModel
                             foreach (Labor labor in labors)
                             {
                                 uploadCommand.Parameters.Clear();
-                                uploadCommand.Parameters.Add("OrderId", System.Data.SqlDbType.Int).Value = orderId;
+                                uploadCommand.Parameters.Add("OrderId", System.Data.SqlDbType.Int).Value = order.OrderId;
                                 uploadCommand.Parameters.Add("LaborId", System.Data.SqlDbType.VarChar).Value = labor.LaborId;
                                 uploadCommand.Parameters.Add("MechanicId", System.Data.SqlDbType.Int).Value = labor.MechanicId;
                                 uploadCommand.Parameters.Add("LaborSoldPrice", System.Data.SqlDbType.Decimal).Value = labor.LaborSoldPrice;

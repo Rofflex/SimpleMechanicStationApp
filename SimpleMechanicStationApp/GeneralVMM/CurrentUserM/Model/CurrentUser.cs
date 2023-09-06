@@ -4,18 +4,15 @@ namespace SimpleMechanicStationApp.GeneralVMM.CurrentUserM.Model
 {
     public class CurrentUser
     {
+        // Singleton
         private static readonly CurrentUser instance = new CurrentUser();
-
         private CurrentUser()
         {
 
         }
+        public static CurrentUser Instance => instance;
 
-        public static CurrentUser Instance 
-        {
-            get { return instance; }
-        }
-
+        // Properties
         public string Username { get; set; }
         public string Password { get; set; }
         public string Name { get; set; }

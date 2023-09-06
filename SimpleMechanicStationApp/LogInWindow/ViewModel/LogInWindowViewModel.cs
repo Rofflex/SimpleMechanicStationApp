@@ -10,7 +10,7 @@ namespace SimpleMechanicStationApp.LogInWindow.ViewModel
 {
     public class LogInWindowViewModel : ViewModelBase
     {
-        // Class fields
+        // Fields
         private readonly IDBCommands _dbCommands = DBCommands.Instance;
         private readonly CurrentUser _currentUser = CurrentUser.Instance;
 
@@ -35,8 +35,8 @@ namespace SimpleMechanicStationApp.LogInWindow.ViewModel
             }
         }
 
-        public ICommand Login { get; }
-        public ICommand RecoverPassword { get; }
+        public ICommand Login { get; set; }
+        public ICommand RecoverPassword { get; set; }
 
         // Constructor
         public LogInWindowViewModel()
@@ -46,12 +46,16 @@ namespace SimpleMechanicStationApp.LogInWindow.ViewModel
         }
 
         // Methods
-        private void ExecuteRecoverPassword(object obj)
+        private void ExecuteRecoverPassword(object obj)// TODO: Implement password recovery logic
         {
-            // TODO: Implement password recovery logic
             throw new NotImplementedException();
         }
-
+        /// <summary>
+        /// Check username and password in DB using _dbCommands.AuthUser.
+        /// If returns 0 - DB connection is not established; 1 - Wrong login or password; 2 - connection is established
+        /// When connection is established then get current window link to close it, open MainWindow then close current window
+        /// </summary>
+        /// <param name="obj"></param>
         private void ExecuteLogin(object obj)
         {
             var isValidUser = _dbCommands.AuthUser(Username, Password);

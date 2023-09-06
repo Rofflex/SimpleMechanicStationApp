@@ -11,8 +11,7 @@ namespace SimpleMechanicStationApp.MechanicWindow.ViewModel
         private const string updateQuery = "update Mechanic " +
             "set MechanicId = @MechanicId, MechanicName = @MechanicName " +
             "where MechanicId = @MechanicId;";
-        private const string uploadQuery = "insert into Mechanic(MechanicId, MechanicName) " +
-            "values(@MechanicId, @MechanicName)";
+        private const string uploadQuery = "insert into Mechanic(MechanicId, MechanicName) values(@MechanicId, @MechanicName)";
         private const string getQuery = "select MechanicId, MechanicName " +
             "from Mechanic " +
             "where MechanicId = @Id";
@@ -52,10 +51,17 @@ namespace SimpleMechanicStationApp.MechanicWindow.ViewModel
         }
 
         // Constructor
+        /// <summary>
+        /// Invoke constructor with getting information about mechanic
+        /// </summary>
+        /// <param name="mechanicId">is chosen mechanic</param>
         public MechanicWindowViewModel(int mechanicId):base(mechanicId, selectQueryId,updateQuery, uploadQuery, getQuery)
         {
 
         }
+        /// <summary>
+        /// Invoke constructor without any parameters to create new mechanic
+        /// </summary>
         public MechanicWindowViewModel():base(selectQueryId, updateQuery, uploadQuery, getQueryId)
         {
 

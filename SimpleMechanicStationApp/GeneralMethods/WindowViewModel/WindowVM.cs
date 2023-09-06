@@ -1,7 +1,5 @@
 ﻿using SimpleMechanicStationApp.GeneralMethods.DBMethods.Commands;
 using SimpleMechanicStationApp.GeneralMethods.ViewModelBaseCommand;
-using System.Reflection;
-using System;
 using System.Windows;
 using System.Collections.Generic;
 using SimpleMechanicStationApp.GeneralVMM;
@@ -12,7 +10,7 @@ namespace SimpleMechanicStationApp.GeneralMethods.WindowViewModel
     {
         // Fields
         private readonly string _selectQueryId, _selectQuery, _updateQuery, _uploadQuery;
-        public readonly DBCommands _dbCommands = DBCommands.Instance;
+        public readonly IDBCommands _dbCommands = DBCommands.Instance;
         protected Dictionary<string, object> _nameIdPairs;
         private T _item;
         private T _prevItem;
@@ -191,14 +189,16 @@ namespace SimpleMechanicStationApp.GeneralMethods.WindowViewModel
         /// <param name="selectQueryId">Query to check the same Item ID.</param>
         /// <param name="updateQuery">Query to update values into the table. It can be update sql command or insert and delete.</param>
         /// <param name="uploadQuery">Query to upload values into the table. It can be update sql command or insert and delete.</param>
-        public WindowVM(string selectQueryId, string updateQuery, string uploadQuery)
+        /// <param name="nameIdPairs">Dictionary <string, object> where string - name of property, object - value</param>
+        public WindowVM(string selectQueryId, string updateQuery, string uploadQuery, Dictionary<string, object> nameIdPairs)
         {
             _item = new T();
             _prevItem = (T)_item.Clone();
+            _nameIdPairs = nameIdPairs;
             _selectQueryId = selectQueryId;
             _updateQuery = updateQuery;
             _uploadQuery = uploadQuery;
-            Save = new ViewModelCommand<object>(ExecuteSave_3Query);
+            Save = new ViewModelCommand<object>(ExecuteSave_3Query_Dictionary);
             Edit = new ViewModelCommand<object>(ExecuteEdit);
             IsReadOnly = false;
             IsEditing = true;
@@ -234,13 +234,13 @@ namespace SimpleMechanicStationApp.GeneralMethods.WindowViewModel
         }
         
         // Methods
+        /// <summary>
+        /// Saving item with using 4 queries: selectId, select, update, upload. It's needed because sometimes we should check name and other parameters for the same objects.
+        /// </summary>
         private void ExecuteSave_4Query(object obj)
         {
             int flag = 0;
-            Type type = typeof(T);
-            string typeName = type.Name;
-            PropertyInfo propertyInfo = type.GetProperty($"{typeName}Name");
-            object value = propertyInfo.GetValue(Item);
+            string value = Item.GetName();
             var resultMB = MessageBox.Show("Do you want to save changes ?", "Save item", MessageBoxButton.YesNo);
             if (resultMB == MessageBoxResult.Yes)
             {
@@ -261,13 +261,13 @@ namespace SimpleMechanicStationApp.GeneralMethods.WindowViewModel
                 IsReadOnly = true;
             }
         }
+        /// <summary>
+        /// Saving item with using 3 queries: selectId, update, upload.
+        /// </summary>
         private void ExecuteSave_3Query(object obj)
         {
             int flag = 0;
-            Type type = typeof(T);
-            string typeName = type.Name;
-            PropertyInfo propertyInfo = type.GetProperty($"{typeName}Name");
-            object value = propertyInfo.GetValue(Item);
+            string value = Item.GetName();
             var resultMB = MessageBox.Show("Do you want to save changes ?", "Save item", MessageBoxButton.YesNo);
             if (resultMB == MessageBoxResult.Yes)
             {
@@ -288,13 +288,13 @@ namespace SimpleMechanicStationApp.GeneralMethods.WindowViewModel
                 IsReadOnly = true;
             }
         }
+        /// <summary>
+        /// Saving item with using 3 queries and dictionary: selectId, update, upload, nameIdPairs.
+        /// </summary>
         private void ExecuteSave_3Query_Dictionary(object obj)
         {
             int flag = 0;
-            Type type = typeof(T);
-            string typeName = type.Name;
-            PropertyInfo propertyInfo = type.GetProperty($"{typeName}Name");
-            object value = propertyInfo.GetValue(Item);
+            string value = Item.GetName();
             var resultMB = MessageBox.Show("Do you want to save changes ?", "Save item", MessageBoxButton.YesNo);
             if (resultMB == MessageBoxResult.Yes)
             {
@@ -315,6 +315,9 @@ namespace SimpleMechanicStationApp.GeneralMethods.WindowViewModel
                 IsReadOnly = true;
             }
         }
+        /// <summary>
+        /// Make properties IsReadOnly, IsEditing: false, true
+        /// </summary>
         private void ExecuteEdit(object obj)
         {
             if (IsReadOnly)
