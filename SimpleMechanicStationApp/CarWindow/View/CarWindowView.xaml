@@ -184,6 +184,18 @@
                         Margin="20,0,20,10" 
                         Grid.Row="1"
                         Grid.Column="0">
+                <TextBlock TextAlignment="Center" Text="Car VIN"/>
+                <TextBox Style="{DynamicResource RoundedTextBox_Style_1}"       
+                     Margin="10,0,10,0"     
+                     Height="Auto"
+                     Text="{Binding CarVin, UpdateSourceTrigger=LostFocus}"
+                     TextAlignment="Justify"
+                     IsReadOnly="{Binding IsReadOnly}"/>
+            </StackPanel>
+            <!--<StackPanel Height="Auto" 
+                        Margin="20,0,20,10" 
+                        Grid.Row="1"
+                        Grid.Column="0">
                 <TextBlock TextAlignment="Center" Text="VIN codes"/>
                 <DataGrid ItemsSource="{Binding VIN, UpdateSourceTrigger=LostFocus}"      
                           Margin="10,0,10,0"     
@@ -208,7 +220,7 @@
                           HorizontalGridLinesBrush="Gray"
                           Grid.Row="1"
                           SelectedItem="{Binding SelectedItemParts}"/>
-            </StackPanel>
+            </StackPanel>-->
             <Button x:Name="SaveButton" 
                     Content="Save" 
                     Width="80" 
@@ -229,6 +241,17 @@
                     Padding="15,5,15,5" 
                     Command="{Binding Edit}"
                     IsEnabled="{Binding IsReadOnly}"
+                    Grid.Row="2"/>
+            <Button x:Name="DownloadButton" 
+                    Content="Download" 
+                    Width="100" 
+                    Style="{DynamicResource RoundButtonCornerStyle_1}" 
+                    HorizontalAlignment="Right"
+                    Margin="0,0,170,0"
+                    BorderBrush="Gray" 
+                    Padding="15,5,15,5" 
+                    Command="{Binding Download}"
+                    IsEnabled="True"
                     Grid.Row="2"/>
         </Grid>
     </Grid>

@@ -1,5 +1,11 @@
-﻿using SimpleMechanicStationApp.GeneralMethods.WindowViewModel;
+﻿using SimpleMechanicStationApp.GeneralMethods.ViewModelBaseCommand;
+using SimpleMechanicStationApp.GeneralMethods.WindowViewModel;
 using SimpleMechanicStationApp.GeneralVMM.CarM.Model;
+using System;
+using System.Net.Http;
+using System.Windows;
+using System.Windows.Input;
+using System.Xml;
 
 namespace SimpleMechanicStationApp.CarWindow.ViewModel
 {
@@ -29,27 +35,28 @@ namespace SimpleMechanicStationApp.CarWindow.ViewModel
             "order by CarId desc";
 
         // Fields
+        private string _carVin;
 
         // Properties
-        public Car Car 
+        public Car Car
         {
-            get => Item; 
-            set 
+            get => Item;
+            set
             {
-                Item = value; 
+                Item = value;
                 OnPropertyChanged(nameof(Car));
             }
         }
-        public int CarId 
+        public int CarId
         {
             get => Item.CarId;
-            set 
+            set
             {
                 Item.CarId = value;
                 OnPropertyChanged(nameof(CarId));
             }
         }
-        public string CarMake 
+        public string CarMake
         {
             get => Item.CarMake;
             set
@@ -150,6 +157,16 @@ namespace SimpleMechanicStationApp.CarWindow.ViewModel
                 OnPropertyChanged(nameof(CarLink));
             }
         }
+        public string CarVin
+        {
+            get => _carVin;
+            set
+            {
+                _carVin = value;
+                OnPropertyChanged(nameof(CarVin));
+            }
+        }
+        public ICommand Download { get; set; }
 
         // Constructor
         /// <summary>
@@ -158,17 +175,65 @@ namespace SimpleMechanicStationApp.CarWindow.ViewModel
         /// <param name="carId">is chosen car</param>
         public CarWindowViewModel(int carId) : base(carId, selectQueryId, selectQuery, updateQuery, uploadQuery, getQuery)
         {
-
+            Download = new ViewModelCommand<object>(ExecuteDownload);
         }
         /// <summary>
         /// Invoke constructor without any parameters to create new car
         /// </summary>
         public CarWindowViewModel() : base(selectQueryId, selectQuery, updateQuery, uploadQuery, getQueryId)
         {
-
+            Download = new ViewModelCommand<object>(ExecuteDownload);
         }
 
         // Methods
+        private async void ExecuteDownload(object obj)
+        {
+            if (CarVin != null || CarVin != "") //To test: 3VV4B7AX3NM139593
+            {
 
+                // URL from api
+                string apiUrl = $"https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues/{CarVin}?format=xml";
+
+                using (HttpClient httpClient = new HttpClient())
+                {
+
+                    try
+                    {
+                        // Post-query 
+                        HttpResponseMessage response = await httpClient.GetAsync(apiUrl);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            // Success
+                            string responseBody = await response.Content.ReadAsStringAsync();
+
+                            var xmlDoc = new XmlDocument();
+                            xmlDoc.LoadXml(responseBody);
+
+                            CarMake = xmlDoc.SelectSingleNode("/Response/Results/DecodedVINValues/Make")?.InnerText;
+                            CarModel = xmlDoc.SelectSingleNode("/Response/Results/DecodedVINValues/Model")?.InnerText;
+                            CarYear = Convert.ToInt32(xmlDoc.SelectSingleNode("/Response/Results/DecodedVINValues/ModelYear")?.InnerText);
+                            CarTransmission = xmlDoc.SelectSingleNode("/Response/Results/DecodedVINValues/TransmissionStyle")?.InnerText;
+                            CarTrimLevel = xmlDoc.SelectSingleNode("/Response/Results/DecodedVINValues/Trim")?.InnerText;
+                            CarEngine = xmlDoc.SelectSingleNode("/Response/Results/DecodedVINValues/DisplacementL")?.InnerText;
+                            CarBodyStyle = xmlDoc.SelectSingleNode("/Response/Results/DecodedVINValues/BodyClass")?.InnerText;
+
+                            MessageBox.Show("Success");
+                        }
+                        else
+                        {
+                            // Nothing found
+                            MessageBox.Show("Error: " + response.StatusCode);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error: " + ex.Message);
+                    }
+                }
+            }
+            
+        }
     }
-}
+} 
+        
